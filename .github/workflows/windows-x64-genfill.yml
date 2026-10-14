@@ -1,0 +1,59 @@
+# Compila o PhotoCraft (Windows x86_64) COM o Preenchimento Generativo e guarda a pasta portatil
+# como artifact da execucao (Actions > esta execucao > Artifacts). Dispara ao enviar para o branch
+# build/windows-x64 (ou manualmente, se este arquivo estiver no branch principal).
+name: Windows x64 com Preenchimento Generativo
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["build/windows-x64"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Rust (stable, MSVC)
+        shell: pwsh
+        run: |
+          rustup toolchain install stable --profile minimal --target x86_64-pc-windows-msvc
+          rustup default stable
+          rustc --version
+
+      - name: Cache do cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: windows-x64-genfill-${{ hashFiles('Cargo.toml') }}
+          restore-keys: |
+            windows-x64-genfill-
+            windows-x64-baseline-
+
+      - name: Compilar photocraft e photocraft-cli (release)
+        shell: pwsh
+        run: cargo build --release -p photocraft -p photocraft-cli
+
+      - name: Montar a pasta portatil
+        shell: pwsh
+        run: |
+          $d = "dist/photocraft-windows-x64-genfill"
+          New-Item -ItemType Directory -Force $d | Out-Null
+          Copy-Item target/release/photocraft.exe $d/
+          Copy-Item target/release/photocraft-cli.exe $d/
+          Copy-Item LICENSE-APACHE, LICENSE-MIT, NOTICE $d/
+          Set-Content $d/portable.txt "PhotoCraft portable mode"
+          Copy-Item docs/generative-fill.md $d/LEIA-ME-Preenchimento-Generativo.md
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: photocraft-windows-x64-genfill
+          path: dist/photocraft-windows-x64-genfill
+          if-no-files-found: error
