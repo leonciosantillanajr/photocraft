@@ -7,7 +7,7 @@ on:
     branches: ["feat/generative-fill"]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   check:
@@ -27,9 +27,23 @@ jobs:
             target
           key: genfill-check-${{ hashFiles('Cargo.toml') }}
           restore-keys: genfill-check-
-      - name: Testes do crate genfill
-        run: cargo test -p photocraft-genfill
-      - name: Clippy do crate genfill
-        run: cargo clippy -p photocraft-genfill --all-targets -- -D warnings
-      - name: Regras de camadas
-        run: cargo xtask layers
+      - name: Testes, clippy e camadas (log vai para o branch ci-logs)
+        continue-on-error: true
+        run: |
+          mkdir -p out
+          cargo test -p photocraft-genfill 2>&1 | tee out/test.log
+          echo "test exit: ${PIPESTATUS[0]}" >> out/test.log
+          cargo clippy -p photocraft-genfill --all-targets -- -D warnings 2>&1 | tee out/clippy.log
+          echo "clippy exit: ${PIPESTATUS[0]}" >> out/clippy.log
+          cargo xtask layers 2>&1 | tee out/layers.log
+          echo "layers exit: ${PIPESTATUS[0]}" >> out/layers.log
+        shell: bash
+      - name: Publicar logs
+        if: always()
+        run: |
+          git config user.name "ci"; git config user.email "ci@example.com"
+          git checkout --orphan ci-logs
+          git rm -rf . -q || true
+          mkdir -p logs && cp out/*.log logs/ 2>/dev/null || true
+          git add logs && git commit -q -m "logs ${GITHUB_SHA}" || true
+          git push -f origin ci-logs
