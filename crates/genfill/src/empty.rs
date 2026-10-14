@@ -17,7 +17,7 @@ pub struct EmptyRegion {
 /// (cells of `ceil(max(w,h)/max_side)` pixels) so near-touching specks merge into one area.
 pub fn find_empty_regions(image: &Rgba8, thr: u8, min_area: usize, max_side: u32, max_regions: usize) -> Result<Vec<EmptyRegion>> {
     let (w, h) = (image.w as usize, image.h as usize);
-    let empty: Vec<bool> = image.px.chunks_exact(4).map(|p| p[3] < thr).collect();
+    let empty: Vec<bool> = image.px.as_chunks::<4>().0.iter().map(|p| p[3] < thr).collect();
     if !empty.iter().any(|&e| e) {
         return Ok(Vec::new());
     }
@@ -27,10 +27,10 @@ pub fn find_empty_regions(image: &Rgba8, thr: u8, min_area: usize, max_side: u32
     let mut cell = vec![false; gw * gh];
     for y in 0..h {
         for x in 0..w {
-            if empty.get(y * w + x).copied().unwrap_or(false) {
-                if let Some(c) = cell.get_mut((y / f) * gw + x / f) {
-                    *c = true;
-                }
+            if empty.get(y * w + x).copied().unwrap_or(false)
+                && let Some(c) = cell.get_mut((y / f) * gw + x / f)
+            {
+                *c = true;
             }
         }
     }

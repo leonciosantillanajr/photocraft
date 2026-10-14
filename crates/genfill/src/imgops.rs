@@ -58,7 +58,7 @@ impl Rgba8 {
 
     /// Drops alpha (the API takes opaque RGB), like Pillow's `convert("RGB")`.
     pub fn rgb_bytes(&self) -> Vec<u8> {
-        self.px.chunks_exact(4).flat_map(|p| [p[0], p[1], p[2]]).collect()
+        self.px.as_chunks::<4>().0.iter().flat_map(|p| [p[0], p[1], p[2]]).collect()
     }
 
     pub fn resize(&self, nw: u32, nh: u32) -> Result<Self> {
@@ -195,7 +195,7 @@ fn sweep(src: &[u8], w: usize, h: usize, r: usize, horizontal: bool, f: impl Fn(
 fn box_radii(sigma: f32) -> [usize; 3] {
     let ideal = ((12.0 * sigma * sigma / 3.0) + 1.0).sqrt();
     let wl = (ideal.floor() as usize) | 1;
-    let wl = if wl % 2 == 0 { wl.saturating_sub(1).max(1) } else { wl };
+    let wl = if wl.is_multiple_of(2) { wl.saturating_sub(1).max(1) } else { wl };
     let wu = wl + 2;
     let m = ((12.0 * sigma * sigma - 3.0 * (wl * wl) as f32 - 12.0 * wl as f32 - 9.0) / (-4.0 * wl as f32 - 4.0)).round().max(0.0) as usize;
     let rl = (wl - 1) / 2;
@@ -304,9 +304,9 @@ pub fn decode_png(bytes: &[u8]) -> Result<Rgba8> {
     let data = buf.get(..info.buffer_size()).ok_or_else(|| GenFillError::new("PNG inconsistente."))?;
     let px: Vec<u8> = match info.color_type {
         png::ColorType::Rgba => data.to_vec(),
-        png::ColorType::Rgb => data.chunks_exact(3).flat_map(|p| [p[0], p[1], p[2], 255]).collect(),
+        png::ColorType::Rgb => data.as_chunks::<3>().0.iter().flat_map(|p| [p[0], p[1], p[2], 255]).collect(),
         png::ColorType::Grayscale => data.iter().flat_map(|&g| [g, g, g, 255]).collect(),
-        png::ColorType::GrayscaleAlpha => data.chunks_exact(2).flat_map(|p| [p[0], p[0], p[0], p[1]]).collect(),
+        png::ColorType::GrayscaleAlpha => data.as_chunks::<2>().0.iter().flat_map(|p| [p[0], p[0], p[0], p[1]]).collect(),
         png::ColorType::Indexed => return Err(GenFillError::new("PNG indexado inesperado.")),
     };
     Rgba8::new(w, h, px)

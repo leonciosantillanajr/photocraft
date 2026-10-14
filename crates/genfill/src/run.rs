@@ -42,7 +42,7 @@ fn unchanged_warning(generated: &Rgba8, crop: &Rgba8, ctx_mask: &Gray) -> String
         return String::new();
     };
     let (mut sum, mut n) = (0.0f32, 0u32);
-    for ((gp, cp), &mv) in g.px.chunks_exact(4).zip(c.px.chunks_exact(4)).zip(&m.v) {
+    for ((gp, cp), &mv) in g.px.as_chunks::<4>().0.iter().zip(c.px.as_chunks::<4>().0.iter()).zip(&m.v) {
         if mv > 127 {
             sum += (luma(gp) - luma(cp)).abs();
             n += 1;
@@ -104,7 +104,7 @@ pub fn generate(image: &Rgba8, selected: &Gray, params: &Params, cfg: &Config, b
     let grow = cfg.mask_grow_px.max((feather * 1.5).ceil() as u32);
     let soft = ctx_mask.grow(grow).blur(feather as f32);
     let mut patch = made;
-    for (p, &a) in patch.px.chunks_exact_mut(4).zip(&soft.v) {
+    for (p, &a) in patch.px.as_chunks_mut::<4>().0.iter_mut().zip(&soft.v) {
         p[3] = a;
     }
     Ok(Output { origin: (plan.ctx_box[0], plan.ctx_box[1]), patch, plan, warning })
