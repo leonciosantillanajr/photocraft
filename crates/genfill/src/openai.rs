@@ -130,6 +130,14 @@ pub struct UreqBackend {
 }
 
 #[cfg(not(target_arch = "wasm32"))]
+impl std::fmt::Debug for UreqBackend {
+    // Never print the key.
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("UreqBackend(<key hidden>)")
+    }
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 impl UreqBackend {
     /// `OPENAI_API_KEY` wins; `fallback` (the Preferences value) is used when it is empty.
     pub fn from_env_or(fallback: &str) -> Result<Self> {
