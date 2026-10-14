@@ -5,6 +5,8 @@ name: Windows x64 baseline
 
 on:
   workflow_dispatch:
+  push:
+    branches: ["ci/windows-x64-baseline"]
 
 permissions:
   contents: read
