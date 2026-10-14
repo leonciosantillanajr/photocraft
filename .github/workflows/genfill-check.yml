@@ -79,6 +79,8 @@ jobs:
         run: |
           mkdir -p shots
           cargo run --release -p photocraft-ui-egui --example snapshot -- --out shots/bar.png --size 1440x900 --scale 1 --script '[["engine.execute",{"command":"file.new","params":{"width":1200,"height":800}}],["engine.execute",{"command":"select.rect","params":{"x":300,"y":200,"width":400,"height":250}}]]' 2>&1 | tee shots/build.log
+          SCRIPT='[["engine.execute",{"command":"file.new","params":{"width":1200,"height":800}}],["engine.execute",{"command":"select.rect","params":{"x":300,"y":200,"width":400,"height":250}}]]'
+          cargo run --release -p photocraft-ui-egui --example snapshot -- --out shots/prompt.png --size 1440x900 --scale 1 --script "$SCRIPT" --click-at 395,802 2>&1 | tail -3 | tee shots/prompt.log
       - name: Publicar captura
         if: always()
         run: |
