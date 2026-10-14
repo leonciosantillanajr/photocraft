@@ -49,3 +49,40 @@ jobs:
           mkdir -p logs && cp out/*.log logs/ 2>/dev/null || true
           git add logs && git commit -q -m "logs ${GITHUB_SHA}" || true
           git push -f origin ci-logs
+
+  shot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependencias do sistema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libxkbcommon-dev libwayland-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libgtk-3-dev mesa-vulkan-drivers libvulkan1
+      - name: Instalar Rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: genfill-shot-${{ hashFiles('Cargo.toml') }}
+          restore-keys: genfill-shot-
+      - name: Captura da interface com a barra
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p shots
+          cargo run --release -p photocraft-ui-egui --example snapshot -- --out shots/bar.png --size 1440x900 --scale 1 --script '[["engine.execute",{"command":"file.new","params":{"width":1200,"height":800}}],["engine.execute",{"command":"select.rect","params":{"x":300,"y":200,"width":400,"height":250}}]]' 2>&1 | tee shots/build.log
+      - name: Publicar captura
+        if: always()
+        run: |
+          git config user.name "ci"; git config user.email "ci@example.com"
+          git checkout --orphan ci-shots
+          git rm -rf . -q || true
+          git add -f shots
+          git commit -q -m "shots ${GITHUB_SHA}" || true
+          git push -f origin ci-shots
