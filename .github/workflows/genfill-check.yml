@@ -90,3 +90,48 @@ jobs:
           git add -f shots
           git commit -q -m "shots ${GITHUB_SHA}" || true
           git push -f origin ci-shots
+
+  full:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dependencias do sistema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libxkbcommon-dev libwayland-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libgtk-3-dev mesa-vulkan-drivers libvulkan1
+      - name: Instalar Rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+          rustup target add wasm32-unknown-unknown
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: genfill-full-${{ hashFiles('Cargo.toml') }}
+          restore-keys: genfill-full-
+      - name: Testes completos, wasm e parity (log vai para o branch ci-full)
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p out
+          cargo xtask wasm 2>&1 | tail -40 | tee out/wasm.log
+          echo "wasm exit: ${PIPESTATUS[0]}" >> out/wasm.log
+          cargo xtask parity 2>&1 | tail -40 | tee out/parity.log
+          echo "parity exit: ${PIPESTATUS[0]}" >> out/parity.log
+          cargo test -p photocraft-engine --lib 2>&1 | grep -E "^test .*FAILED|test result|panicked|exit" | tail -40 | tee out/engine-all.log
+          echo "engine-all exit: ${PIPESTATUS[0]}" >> out/engine-all.log
+          cargo test -p photocraft-ui-egui --lib 2>&1 | grep -E "^test .*FAILED|test result|panicked|failures:|exit" | tail -60 | tee out/ui-all.log
+          echo "ui-all exit: ${PIPESTATUS[0]}" >> out/ui-all.log
+      - name: Publicar logs
+        if: always()
+        run: |
+          git config user.name "ci"; git config user.email "ci@example.com"
+          git checkout --orphan ci-full
+          git rm -rf . -q || true
+          mkdir -p logs && cp out/*.log logs/ 2>/dev/null || true
+          git add -f logs && git commit -q -m "logs ${GITHUB_SHA}" || true
+          git push -f origin ci-full
