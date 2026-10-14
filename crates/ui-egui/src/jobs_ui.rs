@@ -505,6 +505,15 @@ fn on_event(app: &mut PhotocraftApp, ctx: &egui::Context, e: JobEvent) {
             app.sync_views();
             crate::file_ui::print_status(app, result);
         }
+        JobOutcome::Done(ref result) if e.command.starts_with("edit.generative") => {
+            app.sync_views();
+            app.ui.status = e.label.clone();
+            app.ui.status_error = false;
+            // The model barely changed the area (or another soft warning): say so.
+            if let Some(w) = result.get("warning").and_then(Value::as_str).filter(|w| !w.is_empty()) {
+                notices::io_warnings(app, &e.label, &[w.to_string()]);
+            }
+        }
         JobOutcome::Done(_) => {
             app.sync_views();
             app.ui.status = e.label;
@@ -700,7 +709,8 @@ pub fn status_progress(app: &mut PhotocraftApp, ui: &mut egui::Ui) {
 /// [`DIALOG_DELAY_MS`]; Esc cancels (see [`tick`]).
 pub fn dialog(app: &mut PhotocraftApp, ctx: &egui::Context) {
     let Some(j) = app.session.active_job() else { return };
-    if j.elapsed_ms < DIALOG_DELAY_MS {
+    // Generative Fill shows its own progress (and Cancel) in the floating bar.
+    if j.command.starts_with("edit.generative") || j.elapsed_ms < DIALOG_DELAY_MS {
         return;
     }
     let t = Tokens::get(ctx);

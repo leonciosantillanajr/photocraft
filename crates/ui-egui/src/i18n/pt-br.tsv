@@ -3965,3 +3965,21 @@ layerLabel	No Color	Sem cor
 # View › Guides › right-click a guide
 	Edit Selected Guides	Editar guias selecionadas
 	Clear Selected Guides	Limpar guias selecionadas
+
+# Generative Fill (floating bar)
+	Generative Fill	Preenchimento generativo
+	Describe what to create inside the selection	Descreva o que criar dentro da seleção
+	Remove what is selected and rebuild the background	Remove o que está selecionado e reconstrói o fundo
+	Fill empty areas	Preencher áreas vazias
+	Fill the transparent areas of the image	Preenche as áreas transparentes da imagem
+	Describe what to create (optional)	Descreva o que criar (opcional)
+	Add reference images	Adicionar imagens de referência
+	Remove reference images	Remover imagens de referência
+	Paste your OpenAI API key (sk-…)	Cole sua chave da OpenAI (sk-…)
+	Save key	Salvar chave
+	Generating… {s} s	Gerando… {s} s
+	That does not look like an OpenAI API key (they start with sk-).	Isso não parece uma chave da OpenAI (elas começam com sk-).
+@edit.generativeFill	Generative Fill…	Preenchimento generativo…
+@edit.generativeRemove	Generative Remove	Remoção generativa
+@edit.generativeFillEmpty	Fill Empty Areas	Preencher áreas vazias
+	Cancel selection	Cancelar seleção

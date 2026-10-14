@@ -1275,6 +1275,13 @@ pub struct UiState {
     /// The status message is an error (shown in the warning colour).
     #[serde(default)]
     pub status_error: bool,
+    /// Where the Generative Fill bar sits: (centre as a fraction of the canvas width, distance
+    /// from the canvas bottom in points). `None` = bottom centre.
+    #[serde(default)]
+    pub genfill_bar_pos: Option<[f32; 2]>,
+    /// OpenAI API key for Generative Fill when `OPENAI_API_KEY` is not set.
+    #[serde(default)]
+    pub genfill_api_key: String,
     /// Non-blocking notices (import/export warnings, files that couldn't open), newest last.
     #[serde(default)]
     pub notices: Vec<crate::notices::Notice>,
@@ -1376,6 +1383,8 @@ impl Default for UiState {
             next_id: 1,
             status: String::new(),
             status_error: false,
+            genfill_bar_pos: None,
+            genfill_api_key: String::new(),
             notices: Vec::new(),
             gpu_fallback_notice: None,
             kys_offer: None,
