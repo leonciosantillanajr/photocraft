@@ -236,15 +236,28 @@ pub fn apply(s: &mut Session, kind: Kind, outs: &[Output]) -> Result<Vec<LayerId
 fn run_kind(s: &mut Session, kind: Kind, p: &Value) -> Result<Value> {
     let job = prepare(s, kind, p)?;
     let backend = backend()?;
-    let outs = job.run(&*backend, &|_| {})?;
-    let layers = apply(s, kind, &outs)?;
-    let warning = outs.iter().map(|o| o.warning.as_str()).find(|w| !w.is_empty()).unwrap_or("");
-    Ok(json!({
-        "layers": layers.iter().map(|id| id.0).collect::<Vec<_>>(),
-        "areas": outs.len(),
-        "plan": outs.first().map(|o| o.plan.describe()),
-        "warning": warning,
-    }))
+    // The network call runs on a worker when started with `Session::start` (the UI), inline otherwise.
+    crate::jobs::run(
+        s,
+        kind.label(),
+        true,
+        move |ctx| {
+            ctx.progress(0.05, "Preparando…");
+            let outs = job.run(&*backend, &|m| ctx.progress(0.3, m))?;
+            ctx.check()?;
+            Ok(outs)
+        },
+        move |s, outs| {
+            let layers = apply(s, kind, &outs)?;
+            let warning = outs.iter().map(|o| o.warning.as_str()).find(|w| !w.is_empty()).unwrap_or("");
+            Ok(json!({
+                "layers": layers.iter().map(|id| id.0).collect::<Vec<_>>(),
+                "areas": outs.len(),
+                "plan": outs.first().map(|o| o.plan.describe()),
+                "warning": warning,
+            }))
+        },
+    )
 }
 
 fn has_selection(s: &Session) -> std::result::Result<(), String> {
