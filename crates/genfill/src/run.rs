@@ -95,15 +95,15 @@ pub fn generate(image: &Rgba8, selected: &Gray, params: &Params, cfg: &Config, b
     let bytes = openai::call(backend, cfg, &plan.tier, prompt, images, edit_mask_png(&m_send)?, plan.send_size)?;
 
     progress("Montando a camada…");
-    let gen = crate::imgops::decode_png(&bytes)?;
+    let made = crate::imgops::decode_png(&bytes)?;
     let (cw, ch) = plan.ctx_size();
-    let gen = if (gen.w, gen.h) == (cw, ch) { gen } else { gen.resize(cw, ch)? };
-    let warning = unchanged_warning(&gen, &crop, &ctx_mask);
+    let made = if (made.w, made.h) == (cw, ch) { made } else { made.resize(cw, ch)? };
+    let warning = unchanged_warning(&made, &crop, &ctx_mask);
 
     let feather = (cw.max(ch) as f64 * cfg.feather_ratio).max(1.0);
     let grow = cfg.mask_grow_px.max((feather * 1.5).ceil() as u32);
     let soft = ctx_mask.grow(grow).blur(feather as f32);
-    let mut patch = gen;
+    let mut patch = made;
     for (p, &a) in patch.px.chunks_exact_mut(4).zip(&soft.v) {
         p[3] = a;
     }
