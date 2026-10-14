@@ -1,0 +1,35 @@
+# Verificacao do Preenchimento Generativo (branch feat/generative-fill): testes, clippy e regras de camadas.
+name: Genfill check
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["feat/generative-fill"]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar Rust
+        run: |
+          rustup toolchain install stable --profile minimal -c clippy
+          rustup default stable
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: genfill-check-${{ hashFiles('Cargo.toml') }}
+          restore-keys: genfill-check-
+      - name: Testes do crate genfill
+        run: cargo test -p photocraft-genfill
+      - name: Clippy do crate genfill
+        run: cargo clippy -p photocraft-genfill --all-targets -- -D warnings
+      - name: Regras de camadas
+        run: cargo xtask layers
