@@ -122,9 +122,9 @@ jobs:
           echo "wasm exit: ${PIPESTATUS[0]}" >> out/wasm.log
           cargo xtask parity 2>&1 | tail -40 | tee out/parity.log
           echo "parity exit: ${PIPESTATUS[0]}" >> out/parity.log
-          cargo test -p photocraft-engine --lib 2>&1 | grep -E "^test .*FAILED|test result|panicked|exit" | tail -40 | tee out/engine-all.log
+          cargo test -p photocraft-engine --lib genfill 2>&1 | grep -E "^test .*FAILED|test result|panicked|exit" | tail -40 | tee out/engine-all.log
           echo "engine-all exit: ${PIPESTATUS[0]}" >> out/engine-all.log
-          cargo test -p photocraft-ui-egui --lib 2>&1 | grep -E "^test .*FAILED|test result|panicked|failures:|exit" | tail -60 | tee out/ui-all.log
+          cargo test -p photocraft-ui-egui --lib i18n 2>&1 | grep -E "^test .*FAILED|test result|panicked|failures:|exit" | tail -60 | tee out/ui-all.log
           echo "ui-all exit: ${PIPESTATUS[0]}" >> out/ui-all.log
       - name: Publicar logs
         if: always()

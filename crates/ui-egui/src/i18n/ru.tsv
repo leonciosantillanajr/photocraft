@@ -3144,3 +3144,18 @@ curves	Smooth	Сгладить
 # View › Guides › right-click a guide
 	Edit Selected Guides	Изменить выбранные направляющие
 	Clear Selected Guides	Удалить выбранные направляющие
+
+# Generative Fill (floating bar)
+	Generative Fill	Генеративная заливка
+	Describe what to create inside the selection	Опишите, что создать внутри выделенной области
+	Remove what is selected and rebuild the background	Удалить выделенное и восстановить фон
+	Fill empty areas	Заполнить пустые области
+	Fill the transparent areas of the image	Заполняет прозрачные области изображения
+	Cancel selection	Отменить выделение
+	Describe what to create (optional)	Опишите, что создать (необязательно)
+	Add reference images	Добавить эталонные изображения
+	Remove reference images	Удалить эталонные изображения
+	Paste your OpenAI API key (sk-…)	Вставьте ключ API OpenAI (sk-…)
+	Save key	Сохранить ключ
+	Generating… {s} s	Генерация… {s} с
+	That does not look like an OpenAI API key (they start with sk-).	Это не похоже на ключ API OpenAI (он начинается с sk-).

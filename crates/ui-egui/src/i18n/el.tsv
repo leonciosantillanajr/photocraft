@@ -3875,3 +3875,18 @@ curves	Smooth	Εξομάλυνση
 # View › Guides › right-click a guide
 	Edit Selected Guides	Επεξεργασία επιλεγμένων οδηγών
 	Clear Selected Guides	Απαλοιφή επιλεγμένων οδηγών
+
+# Generative Fill (floating bar)
+	Generative Fill	Γενετική συμπλήρωση
+	Describe what to create inside the selection	Περιγράψτε τι θα δημιουργηθεί μέσα στην επιλογή
+	Remove what is selected and rebuild the background	Αφαίρεση της επιλογής και ανακατασκευή του φόντου
+	Fill empty areas	Συμπλήρωση κενών περιοχών
+	Fill the transparent areas of the image	Συμπληρώνει τις διαφανείς περιοχές της εικόνας
+	Cancel selection	Ακύρωση επιλογής
+	Describe what to create (optional)	Περιγράψτε τι θα δημιουργηθεί (προαιρετικό)
+	Add reference images	Προσθήκη εικόνων αναφοράς
+	Remove reference images	Αφαίρεση εικόνων αναφοράς
+	Paste your OpenAI API key (sk-…)	Επικολλήστε το κλειδί API του OpenAI (sk-…)
+	Save key	Αποθήκευση κλειδιού
+	Generating… {s} s	Δημιουργία… {s} δ
+	That does not look like an OpenAI API key (they start with sk-).	Αυτό δεν μοιάζει με κλειδί API του OpenAI (ξεκινούν με sk-).

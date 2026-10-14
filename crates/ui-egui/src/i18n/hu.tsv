@@ -4094,3 +4094,18 @@ cameraRaw	Yellow	Sárga
 # View › Guides › right-click a guide
 	Edit Selected Guides	Kijelölt segédvonalak szerkesztése
 	Clear Selected Guides	Kijelölt segédvonalak törlése
+
+# Generative Fill (floating bar)
+	Generative Fill	Generatív kitöltés
+	Describe what to create inside the selection	Írd le, mit hozzon létre a kijelölésen belül
+	Remove what is selected and rebuild the background	A kijelölt rész eltávolítása és a háttér újraépítése
+	Fill empty areas	Üres területek kitöltése
+	Fill the transparent areas of the image	Kitölti a kép átlátszó területeit
+	Cancel selection	Kijelölés megszüntetése
+	Describe what to create (optional)	Írd le, mit hozzon létre (nem kötelező)
+	Add reference images	Referenciaképek hozzáadása
+	Remove reference images	Referenciaképek eltávolítása
+	Paste your OpenAI API key (sk-…)	Illeszd be az OpenAI API-kulcsodat (sk-…)
+	Save key	Kulcs mentése
+	Generating… {s} s	Generálás… {s} mp
+	That does not look like an OpenAI API key (they start with sk-).	Ez nem OpenAI API-kulcsnak tűnik (sk- előtaggal kezdődnek).

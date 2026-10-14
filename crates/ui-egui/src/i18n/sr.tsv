@@ -4248,3 +4248,18 @@ shape	Appearance	Izgled
 # View › Guides › right-click a guide
 	Edit Selected Guides	Uredi izabrane vodilje
 	Clear Selected Guides	Ukloni izabrane vodilje
+
+# Generative Fill (floating bar)
+	Generative Fill	Generativno popunjavanje
+	Describe what to create inside the selection	Opišite šta treba napraviti unutar izbora
+	Remove what is selected and rebuild the background	Ukloni izabrano i rekonstruiši pozadinu
+	Fill empty areas	Popuni prazne oblasti
+	Fill the transparent areas of the image	Popunjava prozirne oblasti slike
+	Cancel selection	Otkaži izbor
+	Describe what to create (optional)	Opišite šta treba napraviti (opciono)
+	Add reference images	Dodaj referentne slike
+	Remove reference images	Ukloni referentne slike
+	Paste your OpenAI API key (sk-…)	Nalepite svoj OpenAI API ključ (sk-…)
+	Save key	Sačuvaj ključ
+	Generating… {s} s	Generisanje… {s} s
+	That does not look like an OpenAI API key (they start with sk-).	Ovo ne liči na OpenAI API ključ (počinju sa sk-).

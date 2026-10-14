@@ -3935,3 +3935,18 @@ curves	Smooth	Vloeiend maken
 # View › Guides › right-click a guide
 	Edit Selected Guides	Geselecteerde hulplijnen bewerken
 	Clear Selected Guides	Geselecteerde hulplijnen wissen
+
+# Generative Fill (floating bar)
+	Generative Fill	Generatieve vulling
+	Describe what to create inside the selection	Beschrijf wat er binnen de selectie moet komen
+	Remove what is selected and rebuild the background	Verwijdert de selectie en herbouwt de achtergrond
+	Fill empty areas	Lege gebieden vullen
+	Fill the transparent areas of the image	Vult de transparante gebieden van de afbeelding
+	Cancel selection	Selectie annuleren
+	Describe what to create (optional)	Beschrijf wat er gemaakt moet worden (optioneel)
+	Add reference images	Referentieafbeeldingen toevoegen
+	Remove reference images	Referentieafbeeldingen verwijderen
+	Paste your OpenAI API key (sk-…)	Plak je OpenAI-API-sleutel (sk-…)
+	Save key	Sleutel opslaan
+	Generating… {s} s	Genereren… {s} s
+	That does not look like an OpenAI API key (they start with sk-).	Dit lijkt geen OpenAI-API-sleutel (ze beginnen met sk-).

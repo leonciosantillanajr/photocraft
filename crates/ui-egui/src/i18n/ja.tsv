@@ -3851,3 +3851,18 @@ curves	Smooth	スムーズ
 # View › Guides › right-click a guide
 	Edit Selected Guides	選択したガイドを編集
 	Clear Selected Guides	選択したガイドを消去
+
+# Generative Fill (floating bar)
+	Generative Fill	生成塗りつぶし
+	Describe what to create inside the selection	選択範囲内に作成したい内容を入力
+	Remove what is selected and rebuild the background	選択した部分を削除して背景を再構築
+	Fill empty areas	空白領域を塗りつぶす
+	Fill the transparent areas of the image	画像の透明な領域を塗りつぶします
+	Cancel selection	選択を解除
+	Describe what to create (optional)	作成したい内容を入力（任意）
+	Add reference images	参照画像を追加
+	Remove reference images	参照画像を削除
+	Paste your OpenAI API key (sk-…)	OpenAI の API キーを貼り付け (sk-…)
+	Save key	キーを保存
+	Generating… {s} s	生成中… {s} 秒
+	That does not look like an OpenAI API key (they start with sk-).	OpenAI の API キーではないようです（sk- で始まります）。

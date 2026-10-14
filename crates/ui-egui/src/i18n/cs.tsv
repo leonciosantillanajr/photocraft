@@ -3783,3 +3783,18 @@ navigator	Zoom	Zvětšení
 # View › Guides › right-click a guide
 	Edit Selected Guides	Upravit vybraná vodítka
 	Clear Selected Guides	Vymazat vybraná vodítka
+
+# Generative Fill (floating bar)
+	Generative Fill	Generativní výplň
+	Describe what to create inside the selection	Popište, co vytvořit uvnitř výběru
+	Remove what is selected and rebuild the background	Odstranit vybrané a obnovit pozadí
+	Fill empty areas	Vyplnit prázdné oblasti
+	Fill the transparent areas of the image	Vyplní průhledné oblasti obrázku
+	Cancel selection	Zrušit výběr
+	Describe what to create (optional)	Popište, co vytvořit (volitelné)
+	Add reference images	Přidat referenční obrázky
+	Remove reference images	Odebrat referenční obrázky
+	Paste your OpenAI API key (sk-…)	Vložte svůj klíč API OpenAI (sk-…)
+	Save key	Uložit klíč
+	Generating… {s} s	Generování… {s} s
+	That does not look like an OpenAI API key (they start with sk-).	To nevypadá jako klíč API OpenAI (začínají na sk-).

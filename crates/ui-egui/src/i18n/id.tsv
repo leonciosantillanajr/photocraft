@@ -3166,3 +3166,18 @@ curves	Smooth	Haluskan
 # View › Guides › right-click a guide
 	Edit Selected Guides	Edit Panduan Terpilih
 	Clear Selected Guides	Hapus Panduan Terpilih
+
+# Generative Fill (floating bar)
+	Generative Fill	Isi Generatif
+	Describe what to create inside the selection	Jelaskan apa yang akan dibuat di dalam seleksi
+	Remove what is selected and rebuild the background	Hapus yang dipilih dan bangun kembali latar belakang
+	Fill empty areas	Isi area kosong
+	Fill the transparent areas of the image	Mengisi area transparan pada gambar
+	Cancel selection	Batalkan seleksi
+	Describe what to create (optional)	Jelaskan apa yang akan dibuat (opsional)
+	Add reference images	Tambah gambar referensi
+	Remove reference images	Hapus gambar referensi
+	Paste your OpenAI API key (sk-…)	Tempel kunci API OpenAI Anda (sk-…)
+	Save key	Simpan kunci
+	Generating… {s} s	Membuat… {s} dtk
+	That does not look like an OpenAI API key (they start with sk-).	Ini tidak tampak seperti kunci API OpenAI (diawali sk-).

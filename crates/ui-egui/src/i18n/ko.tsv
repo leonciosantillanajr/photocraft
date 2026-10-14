@@ -3353,3 +3353,18 @@ curves	Smooth	매끄럽게
 # View › Guides › right-click a guide
 	Edit Selected Guides	선택한 안내선 편집
 	Clear Selected Guides	선택한 안내선 지우기
+
+# Generative Fill (floating bar)
+	Generative Fill	생성형 채우기
+	Describe what to create inside the selection	선택 영역 안에 만들 내용을 설명하세요
+	Remove what is selected and rebuild the background	선택한 내용을 지우고 배경을 다시 만듭니다
+	Fill empty areas	빈 영역 채우기
+	Fill the transparent areas of the image	이미지의 투명한 영역을 채웁니다
+	Cancel selection	선택 취소
+	Describe what to create (optional)	만들 내용을 설명하세요(선택 사항)
+	Add reference images	참조 이미지 추가
+	Remove reference images	참조 이미지 제거
+	Paste your OpenAI API key (sk-…)	OpenAI API 키를 붙여넣으세요 (sk-…)
+	Save key	키 저장
+	Generating… {s} s	생성 중… {s}초
+	That does not look like an OpenAI API key (they start with sk-).	OpenAI API 키가 아닌 것 같습니다(sk-로 시작합니다).

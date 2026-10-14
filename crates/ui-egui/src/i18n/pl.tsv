@@ -3773,3 +3773,18 @@ curves	Smooth	Wygładź
 # View › Guides › right-click a guide
 	Edit Selected Guides	Edytuj zaznaczone prowadnice
 	Clear Selected Guides	Usuń zaznaczone prowadnice
+
+# Generative Fill (floating bar)
+	Generative Fill	Wypełnienie generatywne
+	Describe what to create inside the selection	Opisz, co utworzyć wewnątrz zaznaczenia
+	Remove what is selected and rebuild the background	Usuń zaznaczone i odbuduj tło
+	Fill empty areas	Wypełnij puste obszary
+	Fill the transparent areas of the image	Wypełnia przezroczyste obszary obrazu
+	Cancel selection	Anuluj zaznaczenie
+	Describe what to create (optional)	Opisz, co utworzyć (opcjonalnie)
+	Add reference images	Dodaj obrazy referencyjne
+	Remove reference images	Usuń obrazy referencyjne
+	Paste your OpenAI API key (sk-…)	Wklej swój klucz API OpenAI (sk-…)
+	Save key	Zapisz klucz
+	Generating… {s} s	Generowanie… {s} s
+	That does not look like an OpenAI API key (they start with sk-).	To nie wygląda na klucz API OpenAI (zaczynają się od sk-).

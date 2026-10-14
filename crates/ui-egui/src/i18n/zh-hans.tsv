@@ -2790,3 +2790,18 @@ curves	Smooth	平滑
 # View › Guides › right-click a guide
 	Edit Selected Guides	编辑所选参考线
 	Clear Selected Guides	清除所选参考线
+
+# Generative Fill (floating bar)
+	Generative Fill	生成式填充
+	Describe what to create inside the selection	描述要在选区内创建的内容
+	Remove what is selected and rebuild the background	删除所选内容并重建背景
+	Fill empty areas	填充空白区域
+	Fill the transparent areas of the image	填充图像的透明区域
+	Cancel selection	取消选择
+	Describe what to create (optional)	描述要创建的内容（可选）
+	Add reference images	添加参考图像
+	Remove reference images	移除参考图像
+	Paste your OpenAI API key (sk-…)	粘贴你的 OpenAI API 密钥 (sk-…)
+	Save key	保存密钥
+	Generating… {s} s	正在生成… {s} 秒
+	That does not look like an OpenAI API key (they start with sk-).	这看起来不是 OpenAI API 密钥（以 sk- 开头）。

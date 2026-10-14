@@ -3177,3 +3177,18 @@ curves	Smooth	Glätten
 # View › Guides › right-click a guide
 	Edit Selected Guides	Ausgewählte Hilfslinien bearbeiten
 	Clear Selected Guides	Ausgewählte Hilfslinien löschen
+
+# Generative Fill (floating bar)
+	Generative Fill	Generatives Füllen
+	Describe what to create inside the selection	Beschreibe, was innerhalb der Auswahl erstellt werden soll
+	Remove what is selected and rebuild the background	Entfernt die Auswahl und rekonstruiert den Hintergrund
+	Fill empty areas	Leere Bereiche füllen
+	Fill the transparent areas of the image	Füllt die transparenten Bereiche des Bildes
+	Cancel selection	Auswahl aufheben
+	Describe what to create (optional)	Beschreibe, was erstellt werden soll (optional)
+	Add reference images	Referenzbilder hinzufügen
+	Remove reference images	Referenzbilder entfernen
+	Paste your OpenAI API key (sk-…)	OpenAI-API-Schlüssel einfügen (sk-…)
+	Save key	Schlüssel speichern
+	Generating… {s} s	Wird generiert… {s} s
+	That does not look like an OpenAI API key (they start with sk-).	Das sieht nicht wie ein OpenAI-API-Schlüssel aus (er beginnt mit sk-).

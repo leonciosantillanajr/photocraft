@@ -3905,3 +3905,18 @@ cameraData	Lens	Lens
 # View › Guides › right-click a guide
 	Edit Selected Guides	Seçili Kılavuzları Düzenle
 	Clear Selected Guides	Seçili Kılavuzları Temizle
+
+# Generative Fill (floating bar)
+	Generative Fill	Üretken Dolgu
+	Describe what to create inside the selection	Seçimin içine ne oluşturulacağını açıklayın
+	Remove what is selected and rebuild the background	Seçileni kaldırır ve arka planı yeniden oluşturur
+	Fill empty areas	Boş alanları doldur
+	Fill the transparent areas of the image	Görüntünün saydam alanlarını doldurur
+	Cancel selection	Seçimi iptal et
+	Describe what to create (optional)	Ne oluşturulacağını açıklayın (isteğe bağlı)
+	Add reference images	Referans görüntüler ekle
+	Remove reference images	Referans görüntüleri kaldır
+	Paste your OpenAI API key (sk-…)	OpenAI API anahtarınızı yapıştırın (sk-…)
+	Save key	Anahtarı kaydet
+	Generating… {s} s	Üretiliyor… {s} sn
+	That does not look like an OpenAI API key (they start with sk-).	Bu bir OpenAI API anahtarına benzemiyor (sk- ile başlarlar).

@@ -3661,3 +3661,18 @@ curves	Smooth	Làm mượt
 # View › Guides › right-click a guide
 	Edit Selected Guides	Sửa đường căn đã chọn
 	Clear Selected Guides	Xóa đường căn đã chọn
+
+# Generative Fill (floating bar)
+	Generative Fill	Tô màu tạo sinh
+	Describe what to create inside the selection	Mô tả nội dung cần tạo bên trong vùng chọn
+	Remove what is selected and rebuild the background	Xóa phần đã chọn và dựng lại nền
+	Fill empty areas	Lấp đầy vùng trống
+	Fill the transparent areas of the image	Lấp đầy các vùng trong suốt của hình ảnh
+	Cancel selection	Hủy vùng chọn
+	Describe what to create (optional)	Mô tả nội dung cần tạo (không bắt buộc)
+	Add reference images	Thêm ảnh tham chiếu
+	Remove reference images	Xóa ảnh tham chiếu
+	Paste your OpenAI API key (sk-…)	Dán khóa API OpenAI của bạn (sk-…)
+	Save key	Lưu khóa
+	Generating… {s} s	Đang tạo… {s} giây
+	That does not look like an OpenAI API key (they start with sk-).	Đây không giống khóa API OpenAI (khóa bắt đầu bằng sk-).

@@ -3179,3 +3179,18 @@ curves	Smooth	Lisser
 # View › Guides › right-click a guide
 	Edit Selected Guides	Modifier les repères sélectionnés
 	Clear Selected Guides	Effacer les repères sélectionnés
+
+# Generative Fill (floating bar)
+	Generative Fill	Remplissage génératif
+	Describe what to create inside the selection	Décrivez ce qu’il faut créer dans la sélection
+	Remove what is selected and rebuild the background	Supprime la sélection et reconstruit l’arrière-plan
+	Fill empty areas	Remplir les zones vides
+	Fill the transparent areas of the image	Remplit les zones transparentes de l’image
+	Cancel selection	Annuler la sélection
+	Describe what to create (optional)	Décrivez ce qu’il faut créer (facultatif)
+	Add reference images	Ajouter des images de référence
+	Remove reference images	Retirer les images de référence
+	Paste your OpenAI API key (sk-…)	Collez votre clé API OpenAI (sk-…)
+	Save key	Enregistrer la clé
+	Generating… {s} s	Génération… {s} s
+	That does not look like an OpenAI API key (they start with sk-).	Cela ne ressemble pas à une clé API OpenAI (elles commencent par sk-).

@@ -4296,3 +4296,18 @@ shape	Appearance	Aspetto
 # View › Guides › right-click a guide
 	Edit Selected Guides	Modifica guide selezionate
 	Clear Selected Guides	Cancella guide selezionate
+
+# Generative Fill (floating bar)
+	Generative Fill	Riempimento generativo
+	Describe what to create inside the selection	Descrivi cosa creare all’interno della selezione
+	Remove what is selected and rebuild the background	Rimuove la selezione e ricostruisce lo sfondo
+	Fill empty areas	Riempi aree vuote
+	Fill the transparent areas of the image	Riempie le aree trasparenti dell’immagine
+	Cancel selection	Annulla selezione
+	Describe what to create (optional)	Descrivi cosa creare (facoltativo)
+	Add reference images	Aggiungi immagini di riferimento
+	Remove reference images	Rimuovi immagini di riferimento
+	Paste your OpenAI API key (sk-…)	Incolla la tua chiave API OpenAI (sk-…)
+	Save key	Salva chiave
+	Generating… {s} s	Generazione… {s} s
+	That does not look like an OpenAI API key (they start with sk-).	Non sembra una chiave API OpenAI (iniziano con sk-).

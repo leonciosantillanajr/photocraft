@@ -4137,3 +4137,18 @@ navigator	Zoom	Zoom
 # View › Guides › right-click a guide
 	Edit Selected Guides	Editar guías seleccionadas
 	Clear Selected Guides	Borrar guías seleccionadas
+
+# Generative Fill (floating bar)
+	Generative Fill	Relleno generativo
+	Describe what to create inside the selection	Describe qué crear dentro de la selección
+	Remove what is selected and rebuild the background	Elimina lo seleccionado y reconstruye el fondo
+	Fill empty areas	Rellenar áreas vacías
+	Fill the transparent areas of the image	Rellena las áreas transparentes de la imagen
+	Cancel selection	Cancelar selección
+	Describe what to create (optional)	Describe qué crear (opcional)
+	Add reference images	Añadir imágenes de referencia
+	Remove reference images	Quitar imágenes de referencia
+	Paste your OpenAI API key (sk-…)	Pega tu clave de API de OpenAI (sk-…)
+	Save key	Guardar clave
+	Generating… {s} s	Generando… {s} s
+	That does not look like an OpenAI API key (they start with sk-).	Eso no parece una clave de API de OpenAI (empiezan por sk-).
