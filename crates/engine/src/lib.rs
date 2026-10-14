@@ -77,6 +77,7 @@ pub mod mask_view_cmds;
 mod migrate_cmds;
 pub mod mode_cmds;
 pub mod multichannel_cmds;
+pub mod genfill_cmds;
 pub mod new_layer;
 pub mod notes_cmds;
 pub mod paint_cmds;

@@ -28,6 +28,7 @@ photocraft-algo = { workspace = true }
 photocraft-text = { workspace = true }
 photocraft-vector = { workspace = true }
 photocraft-io = { workspace = true }
+photocraft-genfill = { workspace = true }
 photocraft-psd = { workspace = true }
 photocraft-format = { workspace = true }
 photocraft-plugins = { workspace = true }
@@ -49,5 +50,7 @@ photocraft-affinity = { workspace = true, features = ["synth"] }
 photocraft-raw = { workspace = true, features = ["testgen"] }
 # WebAssembly text -> binary for plug-in test modules (Apache-2.0 WITH LLVM-exception).
 wat = "1.228"
+# Encodes the fake image-edit reply in the generative-fill tests.
+png = "0.18"
 # Synthetic multi-part EXR fixtures for the parts-commands tests.
 exr = { version = "1.73", default-features = false }

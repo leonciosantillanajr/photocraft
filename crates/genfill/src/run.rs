@@ -110,6 +110,25 @@ pub fn generate(image: &Rgba8, selected: &Gray, params: &Params, cfg: &Config, b
     Ok(Output { origin: (plan.ctx_box[0], plan.ctx_box[1]), patch, plan, warning })
 }
 
+/// Fills every empty (transparent) area of `image`, largest first, one request per area. Each
+/// result is composited into the working image so later areas see it as context.
+pub fn generate_empty(image: &Rgba8, params: &Params, cfg: &Config, backend: &dyn Backend, max_regions: usize, progress: &dyn Fn(&str)) -> Result<Vec<Output>> {
+    let regions = crate::empty::find_empty_regions(image, 16, 0, 800, max_regions)?;
+    if regions.is_empty() {
+        return Err(GenFillError::new("Não há áreas vazias (transparentes) na imagem."));
+    }
+    let total = regions.len();
+    let mut work = image.clone();
+    let mut outs = Vec::with_capacity(total);
+    for (i, region) in regions.iter().enumerate() {
+        progress(&format!("Área vazia {} de {total}…", i + 1));
+        let out = generate(&work, &region.mask, params, cfg, backend, progress)?;
+        work.composite_over(&out.patch, out.origin.0, out.origin.1);
+        outs.push(out);
+    }
+    Ok(outs)
+}
+
 #[cfg(test)]
 mod tests {
     use std::sync::Mutex;
@@ -256,6 +275,24 @@ mod tests {
         assert!(generate(&img, &sel(200, 200, [0, 0, 10, 10]), &params(Mode::Fill, ""), &Config::default(), &fake, &|_| {}).is_err());
         assert!(generate(&img, &sel(300, 300, [0, 0, 0, 0]), &params(Mode::Fill, ""), &Config::default(), &fake, &|_| {}).is_err());
         assert!(fake.seen.lock().unwrap().is_empty());
+    }
+
+    #[test]
+    fn fill_empty_makes_one_patch_per_area_and_feeds_context_forward() {
+        let mut img = photo(800, 600);
+        for (b, _) in [([0u32, 0, 200, 150], 0), ([500, 400, 700, 550], 1)] {
+            for y in b[1]..b[3] {
+                for x in b[0]..b[2] {
+                    img.px[((y * 800 + x) * 4 + 3) as usize] = 0;
+                }
+            }
+        }
+        let fake = Fake::new([5, 6, 7]);
+        let outs = generate_empty(&img, &params(Mode::Fill, ""), &Config::default(), &fake, 8, &|_| {}).unwrap();
+        assert_eq!(outs.len(), 2);
+        assert_eq!(fake.seen.lock().unwrap().len(), 2);
+        // the second request's crop is built from the image that already holds the first patch
+        assert!(generate_empty(&photo(100, 100), &params(Mode::Fill, ""), &Config::default(), &fake, 8, &|_| {}).unwrap_err().0.contains("áreas vazias"));
     }
 
     #[test]

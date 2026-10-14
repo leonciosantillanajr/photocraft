@@ -66,6 +66,37 @@ impl Rgba8 {
         Ok(Self { w: nw, h: nh, px })
     }
 
+    /// Alpha-composites `top` (straight RGBA) onto `self` with its top-left corner at `(x, y)`.
+    /// Parts of `top` outside the image are ignored.
+    pub fn composite_over(&mut self, top: &Rgba8, x: u32, y: u32) {
+        for ty in 0..top.h {
+            let dy = y.saturating_add(ty);
+            if dy >= self.h {
+                break;
+            }
+            for tx in 0..top.w {
+                let dx = x.saturating_add(tx);
+                if dx >= self.w {
+                    break;
+                }
+                let si = (ty as usize * top.w as usize + tx as usize) * 4;
+                let di = (dy as usize * self.w as usize + dx as usize) * 4;
+                let (Some(s), Some(d)) = (top.px.get(si..si + 4), self.px.get_mut(di..di + 4)) else { continue };
+                let sa = s[3] as f32 / 255.0;
+                if sa <= 0.0 {
+                    continue;
+                }
+                let da = d[3] as f32 / 255.0;
+                let oa = sa + da * (1.0 - sa);
+                for c in 0..3 {
+                    let v = (s[c] as f32 * sa + d[c] as f32 * da * (1.0 - sa)) / oa;
+                    d[c] = (v + 0.5).clamp(0.0, 255.0) as u8;
+                }
+                d[3] = (oa * 255.0 + 0.5).clamp(0.0, 255.0) as u8;
+            }
+        }
+    }
+
     /// PNG bytes of the RGB channels (opaque).
     pub fn to_png_rgb(&self) -> Result<Vec<u8>> {
         encode_png(self.w, self.h, png::ColorType::Rgb, &self.rgb_bytes())
@@ -372,6 +403,23 @@ mod tests {
         let g = Gray::new(4, 4, (0..16).map(|i| if i % 2 == 0 { 255 } else { 0 }).collect()).unwrap();
         let r = g.resize_nearest(10, 10).unwrap();
         assert!(r.v.iter().all(|&p| p == 0 || p == 255));
+    }
+
+    #[test]
+    fn composite_over_blends_and_clips() {
+        let mut base = solid(4, 4, [0, 0, 0, 255]);
+        let top = solid(3, 3, [200, 100, 50, 255]);
+        base.composite_over(&top, 2, 2); // only the 2x2 corner fits
+        assert_eq!(&base.px[(2 * 4 + 2) * 4..(2 * 4 + 2) * 4 + 4], [200, 100, 50, 255]);
+        assert_eq!(&base.px[0..4], [0, 0, 0, 255]);
+        let half = solid(1, 1, [255, 255, 255, 128]);
+        base.composite_over(&half, 0, 0);
+        assert!(base.px[0] > 120 && base.px[0] < 135, "{}", base.px[0]);
+        // transparent base takes the top's colour and alpha
+        let mut clear = solid(1, 1, [0, 0, 0, 0]);
+        clear.composite_over(&half, 0, 0);
+        assert_eq!(clear.px, [255, 255, 255, 128]);
+        base.composite_over(&top, 100, 100); // fully outside: no-op, no panic
     }
 
     #[test]

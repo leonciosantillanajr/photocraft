@@ -23,7 +23,7 @@ mod run;
 pub use imgops::{Gray, Rgba8};
 pub use openai::{Backend, BackendError, EditRequest};
 pub use plan::{Config, Plan, Tier};
-pub use run::{Mode, Output, Params, generate};
+pub use run::{Mode, Output, Params, generate, generate_empty};
 
 /// An error with a message ready to show the user.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
