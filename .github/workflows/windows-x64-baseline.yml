@@ -1,0 +1,54 @@
+# Baseline: compila photocraft.exe (Windows x86_64) SEM alteracoes de codigo e publica o .exe como
+# artifact. Disparo manual (Actions > Windows x64 baseline > Run workflow). Serve para provar que o
+# fork compila no Windows antes de acrescentar o Preenchimento Generativo.
+name: Windows x64 baseline
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Rust (stable, MSVC)
+        shell: pwsh
+        run: |
+          rustup toolchain install stable --profile minimal --target x86_64-pc-windows-msvc
+          rustup default stable
+          rustc --version
+          cargo --version
+
+      - name: Cache do cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: windows-x64-baseline-${{ hashFiles('Cargo.lock') }}
+          restore-keys: windows-x64-baseline-
+
+      - name: Compilar photocraft e photocraft-cli (release)
+        shell: pwsh
+        run: cargo build --release -p photocraft -p photocraft-cli
+
+      - name: Montar a pasta portatil
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist/photocraft-windows-x64-portable | Out-Null
+          Copy-Item target/release/photocraft.exe dist/photocraft-windows-x64-portable/
+          Copy-Item target/release/photocraft-cli.exe dist/photocraft-windows-x64-portable/
+          Copy-Item LICENSE-APACHE, LICENSE-MIT, NOTICE dist/photocraft-windows-x64-portable/
+          Set-Content dist/photocraft-windows-x64-portable/portable.txt "PhotoCraft portable mode"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: photocraft-windows-x64-portable
+          path: dist/photocraft-windows-x64-portable
+          if-no-files-found: error
