@@ -6,6 +6,7 @@
 //! it on a worker thread) and [`apply`] adds the result as new layers in ONE undo step. The
 //! `edit.generative*` commands simply run the three in a row.
 
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex, PoisonError};
 
 use photocraft_color::PixelFormat;
@@ -24,6 +25,13 @@ const MAX_REFERENCE_BYTES: u64 = 64 * 1024 * 1024;
 
 static API_KEY: Mutex<String> = Mutex::new(String::new());
 static BACKEND: Mutex<Option<Arc<dyn Backend>>> = Mutex::new(None);
+static NETWORK_OFF: AtomicBool = AtomicBool::new(false);
+
+/// Makes every real (non-override) backend request fail for the rest of the process. The
+/// adversarial command hunt calls it so fuzzing never reaches the API, even with a key configured.
+pub fn disable_network() {
+    NETWORK_OFF.store(true, Ordering::SeqCst);
+}
 
 /// The API key from Preferences / the UI; `OPENAI_API_KEY` in the environment takes precedence.
 pub fn set_api_key(key: &str) {
@@ -39,6 +47,9 @@ pub fn set_backend_override(backend: Option<Arc<dyn Backend>>) {
 pub fn backend() -> Result<Arc<dyn Backend>> {
     if let Some(b) = BACKEND.lock().unwrap_or_else(PoisonError::into_inner).clone() {
         return Ok(b);
+    }
+    if NETWORK_OFF.load(Ordering::SeqCst) {
+        return Err(EngineError::Other("network access for Generative Fill is disabled in this process".into()));
     }
     let key = API_KEY.lock().unwrap_or_else(PoisonError::into_inner).clone();
     let real = photocraft_genfill::openai::UreqBackend::from_env_or(&key).map_err(into_engine)?;

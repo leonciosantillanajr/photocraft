@@ -12,6 +12,8 @@ use std::time::Duration;
 fn fresh() -> Session {
     // Belt and braces with the EXTERNAL skip below: nothing in this process may reach a printer.
     photocraft_engine::print_cmds::disable_printing();
+    // Generative Fill would otherwise reach the OpenAI API when a key is configured.
+    photocraft_engine::genfill_cmds::disable_network();
     let mut s = Session::new();
     s.execute("file.new", json!({"width": 24, "height": 16})).unwrap();
     s.execute("layer.new.layer", json!({})).unwrap();

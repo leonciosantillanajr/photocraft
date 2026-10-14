@@ -35,7 +35,9 @@ jobs:
           echo "test exit: ${PIPESTATUS[0]}" >> out/test.log
           cargo test -p photocraft-engine --lib genfill 2>&1 | tee out/engine.log
           echo "engine exit: ${PIPESTATUS[0]}" >> out/engine.log
-          cargo clippy -p photocraft-genfill -p photocraft-engine --all-targets -- -D warnings 2>&1 | tee out/clippy.log
+          cargo test -p photocraft-engine --test panic_hunt -- --ignored 2>&1 | tee out/hunt.log
+          echo "hunt exit: ${PIPESTATUS[0]}" >> out/hunt.log
+          cargo clippy -p photocraft-genfill -p photocraft-engine -p photocraft-ui-egui --all-targets -- -D warnings 2>&1 | tee out/clippy.log
           echo "clippy exit: ${PIPESTATUS[0]}" >> out/clippy.log
           cargo xtask layers 2>&1 | tee out/layers.log
           echo "layers exit: ${PIPESTATUS[0]}" >> out/layers.log
