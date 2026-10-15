@@ -3892,3 +3892,6 @@ curves	Smooth	Εξομάλυνση
 	That does not look like an OpenAI API key (they start with sk-).	Αυτό δεν μοιάζει με κλειδί API του OpenAI (ξεκινούν με sk-).
 	Bar always visible (click to show only with a selection)	Η γραμμή εμφανίζεται πάντα (κλικ για εμφάνιση μόνο με επιλογή)
 	Keep this bar always visible	Να εμφανίζεται πάντα αυτή η γραμμή
+	Image generator	Δημιουργός εικόνας
+	API key of the selected generator	Κλειδί API του επιλεγμένου δημιουργού
+	Paste your {name} API key	Επικολλήστε το κλειδί API για {name}

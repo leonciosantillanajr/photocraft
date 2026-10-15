@@ -4265,3 +4265,6 @@ shape	Appearance	Izgled
 	That does not look like an OpenAI API key (they start with sk-).	Ovo ne liči na OpenAI API ključ (počinju sa sk-).
 	Bar always visible (click to show only with a selection)	Traka je uvek vidljiva (kliknite da se prikazuje samo uz izbor)
 	Keep this bar always visible	Neka ova traka uvek bude vidljiva
+	Image generator	Generator slika
+	API key of the selected generator	API ključ izabranog generatora
+	Paste your {name} API key	Nalepite svoj API ključ za {name}

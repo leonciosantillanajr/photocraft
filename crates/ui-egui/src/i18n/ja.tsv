@@ -3868,3 +3868,6 @@ curves	Smooth	スムーズ
 	That does not look like an OpenAI API key (they start with sk-).	OpenAI の API キーではないようです（sk- で始まります）。
 	Bar always visible (click to show only with a selection)	バーを常に表示中（クリックで選択範囲があるときだけ表示）
 	Keep this bar always visible	このバーを常に表示する
+	Image generator	画像ジェネレーター
+	API key of the selected generator	選択中のジェネレーターの API キー
+	Paste your {name} API key	{name} の API キーを貼り付け

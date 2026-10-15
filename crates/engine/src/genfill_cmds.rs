@@ -12,6 +12,7 @@ use std::sync::{Arc, Mutex, PoisonError};
 use photocraft_color::PixelFormat;
 use photocraft_doc::{Document, Layer, LayerId};
 use photocraft_genfill::{Backend, Config, Gray, Mode, Output, Params, Rgba8};
+pub use photocraft_genfill::Provider;
 use photocraft_geom::Rect;
 use serde_json::{Value, json};
 
@@ -23,7 +24,7 @@ const MAX_PIXELS: u64 = 150_000_000;
 const MAX_REFERENCES: usize = 8;
 const MAX_REFERENCE_BYTES: u64 = 64 * 1024 * 1024;
 
-static API_KEY: Mutex<String> = Mutex::new(String::new());
+static API_KEYS: Mutex<[String; 3]> = Mutex::new([String::new(), String::new(), String::new()]);
 static BACKEND: Mutex<Option<Arc<dyn Backend>>> = Mutex::new(None);
 static NETWORK_OFF: AtomicBool = AtomicBool::new(false);
 
@@ -33,9 +34,15 @@ pub fn disable_network() {
     NETWORK_OFF.store(true, Ordering::SeqCst);
 }
 
-/// The API key from Preferences / the UI; `OPENAI_API_KEY` in the environment takes precedence.
-pub fn set_api_key(key: &str) {
-    *API_KEY.lock().unwrap_or_else(PoisonError::into_inner) = key.trim().to_string();
+fn slot(p: Provider) -> usize {
+    Provider::ALL.iter().position(|q| *q == p).unwrap_or(0)
+}
+
+/// The API key of `provider` from the UI; the provider's environment variable takes precedence.
+pub fn set_api_key(provider: Provider, key: &str) {
+    if let Some(k) = API_KEYS.lock().unwrap_or_else(PoisonError::into_inner).get_mut(slot(provider)) {
+        *k = key.trim().to_string();
+    }
 }
 
 /// Replaces the network backend (tests use a fake; `None` goes back to OpenAI).
@@ -43,16 +50,16 @@ pub fn set_backend_override(backend: Option<Arc<dyn Backend>>) {
     *BACKEND.lock().unwrap_or_else(PoisonError::into_inner) = backend;
 }
 
-/// The backend to call: the override, else OpenAI with the key from the environment or [`set_api_key`].
-pub fn backend() -> Result<Arc<dyn Backend>> {
+/// The backend to call: the override, else `provider` with the key from the environment or [`set_api_key`].
+pub fn backend(provider: Provider) -> Result<Arc<dyn Backend>> {
     if let Some(b) = BACKEND.lock().unwrap_or_else(PoisonError::into_inner).clone() {
         return Ok(b);
     }
     if NETWORK_OFF.load(Ordering::SeqCst) {
         return Err(EngineError::Other("network access for Generative Fill is disabled in this process".into()));
     }
-    let key = API_KEY.lock().unwrap_or_else(PoisonError::into_inner).clone();
-    let real = photocraft_genfill::openai::UreqBackend::from_env_or(&key).map_err(into_engine)?;
+    let key = API_KEYS.lock().unwrap_or_else(PoisonError::into_inner).get(slot(provider)).cloned().unwrap_or_default();
+    let real = photocraft_genfill::openai::UreqBackend::from_env_or(provider, &key).map_err(into_engine)?;
     Ok(Arc::new(real))
 }
 
@@ -97,6 +104,7 @@ pub struct Job {
     references: Vec<Rgba8>,
     tier: Option<String>,
     max_regions: usize,
+    pub provider: Provider,
 }
 
 /// The merged (flattened) image as straight RGBA8; transparent where the document is.
@@ -158,6 +166,13 @@ fn tier_param(cmd: &str, p: &Value) -> Result<Option<String>> {
     }
 }
 
+fn provider_param(cmd: &str, p: &Value) -> Result<Provider> {
+    match p.get("provider") {
+        None | Some(Value::Null) => Ok(Provider::OpenAi),
+        Some(v) => v.as_str().and_then(Provider::parse).ok_or_else(|| bad(cmd, "`provider` must be openai, gemini or muse")),
+    }
+}
+
 /// Reads the active document and `p` into a [`Job`] (no network).
 pub fn prepare(s: &Session, kind: Kind, p: &Value) -> Result<Job> {
     let cmd = kind.command();
@@ -182,6 +197,7 @@ pub fn prepare(s: &Session, kind: Kind, p: &Value) -> Result<Job> {
         references: if kind == Kind::Remove { Vec::new() } else { load_references(cmd, p)? },
         tier: tier_param(cmd, p)?,
         max_regions,
+        provider: provider_param(cmd, p)?,
     })
 }
 
@@ -194,6 +210,7 @@ impl Job {
             text: &self.text,
             references: &self.references,
             tier: self.tier.as_deref(),
+            provider: self.provider,
         };
         match (&self.selection, self.kind) {
             (Some(sel), Kind::Fill | Kind::Remove) => {
@@ -246,7 +263,7 @@ pub fn apply(s: &mut Session, kind: Kind, outs: &[Output]) -> Result<Vec<LayerId
 
 fn run_kind(s: &mut Session, kind: Kind, p: &Value) -> Result<Value> {
     let job = prepare(s, kind, p)?;
-    let backend = backend()?;
+    let backend = backend(job.provider)?;
     // The network call runs on a worker when started with `Session::start` (the UI), inline otherwise.
     crate::jobs::run(
         s,
@@ -286,7 +303,7 @@ pub fn specs() -> Vec<CommandSpec> {
             label: "Generative Fill…",
             menu: &[],
             shortcut: None,
-            params: r##"{"prompt":text,"references":[path],"quality":auto|baixa|media|alta} (generates into the selection as a new layer; needs OPENAI_API_KEY; desktop only)"##,
+            params: r##"{"prompt":text,"references":[path],"quality":auto|baixa|media|alta,"provider":openai|gemini|muse} (generates into the selection as a new layer; needs the provider's API key: OPENAI_API_KEY, GEMINI_API_KEY or MODEL_API_KEY; desktop only)"##,
             enabled: has_selection,
             run: |s, p| run_kind(s, Kind::Fill, p),
             journal: false,
@@ -296,7 +313,7 @@ pub fn specs() -> Vec<CommandSpec> {
             label: "Generative Remove",
             menu: &[],
             shortcut: None,
-            params: r##"{"quality":auto|baixa|media|alta} (removes what is in the selection and rebuilds the background, as a new layer; needs OPENAI_API_KEY; desktop only)"##,
+            params: r##"{"quality":auto|baixa|media|alta,"provider":openai|gemini|muse} (removes what is in the selection and rebuilds the background, as a new layer; needs the provider's API key: OPENAI_API_KEY, GEMINI_API_KEY or MODEL_API_KEY; desktop only)"##,
             enabled: has_selection,
             run: |s, p| run_kind(s, Kind::Remove, p),
             journal: false,
@@ -306,7 +323,7 @@ pub fn specs() -> Vec<CommandSpec> {
             label: "Fill Empty Areas",
             menu: &[],
             shortcut: None,
-            params: r##"{"prompt":text,"references":[path],"quality":auto|baixa|media|alta,"maxRegions":int=8} (fills transparent areas of the merged image, one new layer per area; needs OPENAI_API_KEY; desktop only)"##,
+            params: r##"{"prompt":text,"references":[path],"quality":auto|baixa|media|alta,"provider":openai|gemini|muse,"maxRegions":int=8} (fills transparent areas of the merged image, one new layer per area; needs the provider's API key: OPENAI_API_KEY, GEMINI_API_KEY or MODEL_API_KEY; desktop only)"##,
             enabled: has_doc,
             run: |s, p| run_kind(s, Kind::FillEmpty, p),
             journal: false,
@@ -447,6 +464,8 @@ mod tests {
             json!({"prompt": 5}),
             json!({"prompt": "x".repeat(5000)}),
             json!({"quality": "ultra"}),
+            json!({"provider": "dalle"}),
+            json!({"provider": 4}),
             json!({"quality": 3}),
             json!({"references": "a.png"}),
             json!({"references": [1]}),
@@ -461,13 +480,30 @@ mod tests {
     }
 
     #[test]
+    fn provider_is_read_and_a_missing_key_names_its_variable() {
+        let (_g, fake) = install(false);
+        let mut s = doc_session();
+        s.execute("select.rect", json!({"x": 100, "y": 100, "width": 80, "height": 80})).unwrap();
+        s.execute("edit.generativeFill", json!({"provider": "gemini"})).unwrap();
+        assert_eq!(fake.calls.lock().unwrap()[0].provider, Provider::Gemini);
+        assert!(fake.calls.lock().unwrap()[0].mask_png.is_empty());
+        set_backend_override(None);
+        if ["GEMINI_API_KEY", "GOOGLE_API_KEY"].iter().any(|v| std::env::var(v).is_ok_and(|k| !k.trim().is_empty())) {
+            return;
+        }
+        set_api_key(Provider::Gemini, "");
+        let e = s.execute("edit.generativeFill", json!({"provider": "gemini"})).unwrap_err().to_string();
+        assert!(e.contains("GEMINI_API_KEY"), "{e}");
+    }
+
+    #[test]
     fn without_a_key_the_message_says_what_to_do() {
         let _g = SERIAL.lock().unwrap_or_else(PoisonError::into_inner);
         set_backend_override(None);
         if std::env::var("OPENAI_API_KEY").is_ok_and(|k| !k.trim().is_empty()) {
             return; // a real key is configured on this machine
         }
-        set_api_key("");
+        set_api_key(Provider::OpenAi, "");
         let mut s = doc_session();
         s.execute("select.rect", json!({"x": 100, "y": 100, "width": 80, "height": 80})).unwrap();
         let e = s.execute("edit.generativeFill", json!({})).unwrap_err().to_string();

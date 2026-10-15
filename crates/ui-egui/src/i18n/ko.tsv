@@ -3370,3 +3370,6 @@ curves	Smooth	매끄럽게
 	That does not look like an OpenAI API key (they start with sk-).	OpenAI API 키가 아닌 것 같습니다(sk-로 시작합니다).
 	Bar always visible (click to show only with a selection)	막대가 항상 표시됨(클릭하면 선택 영역이 있을 때만 표시)
 	Keep this bar always visible	이 막대를 항상 표시
+	Image generator	이미지 생성기
+	API key of the selected generator	선택한 생성기의 API 키
+	Paste your {name} API key	{name} API 키를 붙여넣으세요

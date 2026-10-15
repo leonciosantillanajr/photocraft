@@ -3,7 +3,8 @@
 use crate::imgops::encode_png;
 use crate::openai::{self, Backend};
 use crate::plan::{Config, Plan, make_plan};
-use crate::prompt::build_prompt;
+use crate::prompt::{build_prompt, build_prompt_marked, pick_marker};
+use crate::provider::Provider;
 use crate::{GenFillError, Gray, Result, Rgba8};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -21,6 +22,8 @@ pub struct Params<'a> {
     pub references: &'a [Rgba8],
     /// Force a quality tier (`baixa`, `media`, `alta`); `None` picks by crop size.
     pub tier: Option<&'a str>,
+    /// Which service makes the image.
+    pub provider: Provider,
 }
 
 /// The generated pixels: image-space position, RGBA (alpha = feathered selection) and the plan used.
@@ -87,12 +90,26 @@ pub fn generate(image: &Rgba8, selected: &Gray, params: &Params, cfg: &Config, b
     let m_send = ctx_mask.resize_nearest(sw, sh)?.grow(grow_send);
 
     let refs = params.references.iter().take(cfg.max_references).map(|r| reference_png(r, cfg.reference_max_side_px)).collect::<Result<Vec<_>>>()?;
-    let prompt = build_prompt(params.mode, params.text, !refs.is_empty());
-    let mut images = vec![crop_send.to_png_rgb()?];
+    let provider = params.provider;
+    let (prompt, first, mask) = if provider.uses_mask() {
+        (build_prompt(params.mode, params.text, !refs.is_empty()), crop_send.to_png_rgb()?, edit_mask_png(&m_send)?)
+    } else {
+        // No mask: paint the area with a colour the picture does not use and say so in the text.
+        let (name, rgb) = pick_marker(&crop_send.px);
+        let mut marked = crop_send.clone();
+        for (p, &m) in marked.px.as_chunks_mut::<4>().0.iter_mut().zip(&m_send.v) {
+            if m > 127 {
+                *p = [rgb[0], rgb[1], rgb[2], 255];
+            }
+        }
+        (build_prompt_marked(params.mode, params.text, name, !refs.is_empty()), marked.to_png_rgb()?, Vec::new())
+    };
+    let mut images = vec![first];
     images.extend(refs);
 
-    progress(&format!("Enviando à OpenAI ({})…", plan.tier.model));
-    let bytes = openai::call(backend, cfg, &plan.tier, prompt, images, edit_mask_png(&m_send)?, plan.send_size)?;
+    let model = provider.model().unwrap_or(plan.tier.model.as_str());
+    progress(&format!("Enviando para {} ({model})…", provider.label()));
+    let bytes = openai::call(backend, cfg, provider, &plan.tier, prompt, images, mask, plan.send_size)?;
 
     progress("Montando a camada…");
     let made = crate::imgops::decode_png(&bytes)?;
@@ -177,7 +194,7 @@ mod tests {
     }
 
     fn params(mode: Mode, text: &str) -> Params<'_> {
-        Params { mode, text, references: &[], tier: None }
+        Params { mode, text, references: &[], tier: None, provider: Provider::OpenAi }
     }
 
     #[test]
@@ -205,7 +222,7 @@ mod tests {
         let s = sel(900, 700, [300, 250, 500, 400]);
         let fake = Fake::new([0, 0, 0]);
         let refs = [photo(40, 30)];
-        let p = Params { mode: Mode::Fill, text: "gato", references: &refs, tier: Some("media") };
+        let p = Params { mode: Mode::Fill, text: "gato", references: &refs, tier: Some("media"), provider: Provider::OpenAi };
         generate(&img, &s, &p, &Config::default(), &fake, &|_| {}).unwrap();
         let seen = fake.seen.lock().unwrap();
         let r = &seen[0];
@@ -223,6 +240,41 @@ mod tests {
     }
 
     #[test]
+    fn services_without_a_mask_get_a_marked_image_and_no_mask() {
+        let img = photo(900, 700);
+        let s = sel(900, 700, [300, 250, 500, 400]);
+        let fake = Fake::new([1, 2, 3]);
+        let p = Params { mode: Mode::Fill, text: "gato", references: &[], tier: None, provider: Provider::Gemini };
+        let out = generate(&img, &s, &p, &Config::default(), &fake, &|_| {}).unwrap();
+        let seen = fake.seen.lock().unwrap();
+        let r = &seen[0];
+        assert_eq!(r.provider, Provider::Gemini);
+        assert_eq!(r.model, "gemini-3.1-flash-image");
+        assert!(r.mask_png.is_empty());
+        assert!(r.prompt.contains("painted solid") && r.prompt.contains("gato"));
+        // the first image holds the marker colour in the middle and the photo near the corner
+        let first = crate::imgops::decode_png(&r.images_png[0]).unwrap();
+        let mid = ((first.h / 2 * first.w + first.w / 2) * 4) as usize;
+        let marker = &first.px[mid..mid + 3];
+        assert!(marker == [255, 0, 255] || marker == [0, 255, 0] || marker == [0, 255, 255] || marker == [255, 255, 0], "{marker:?}");
+        assert_ne!(&first.px[0..3], marker);
+        assert_eq!(out.patch.px.len(), (out.patch.w * out.patch.h * 4) as usize);
+    }
+
+    #[test]
+    fn muse_uses_its_own_model_and_base() {
+        let img = photo(600, 600);
+        let s = sel(600, 600, [100, 100, 300, 300]);
+        let fake = Fake::new([1, 2, 3]);
+        let p = Params { mode: Mode::Remove, text: "", references: &[], tier: None, provider: Provider::Muse };
+        generate(&img, &s, &p, &Config::default(), &fake, &|_| {}).unwrap();
+        let seen = fake.seen.lock().unwrap();
+        assert_eq!(seen[0].model, "muse-image-1.0");
+        assert_eq!(seen[0].api_base, "https://api.meta.ai/v1");
+        assert!(seen[0].mask_png.is_empty());
+    }
+
+    #[test]
     fn remove_mode_ignores_text() {
         let img = photo(600, 600);
         let s = sel(600, 600, [100, 100, 200, 200]);
@@ -237,7 +289,7 @@ mod tests {
         let s = sel(600, 600, [100, 100, 200, 200]);
         let fake = Fake::new([1, 2, 3]);
         let refs: Vec<Rgba8> = (0..9).map(|_| photo(10, 10)).collect();
-        let p = Params { mode: Mode::Fill, text: "", references: &refs, tier: None };
+        let p = Params { mode: Mode::Fill, text: "", references: &refs, tier: None, provider: Provider::OpenAi };
         generate(&img, &s, &p, &Config::default(), &fake, &|_| {}).unwrap();
         assert_eq!(fake.seen.lock().unwrap()[0].images_png.len(), 1 + 4);
     }

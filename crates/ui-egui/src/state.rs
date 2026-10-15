@@ -1282,6 +1282,15 @@ pub struct UiState {
     /// OpenAI API key for Generative Fill when `OPENAI_API_KEY` is not set.
     #[serde(default)]
     pub genfill_api_key: String,
+    /// Generative Fill: the chosen image generator (`openai`, `gemini` or `muse`).
+    #[serde(default)]
+    pub genfill_provider: String,
+    /// Google (Nano Banana 2) API key for Generative Fill when `GEMINI_API_KEY` is not set.
+    #[serde(default)]
+    pub genfill_key_gemini: String,
+    /// Meta (Muse Image) API key for Generative Fill when `MODEL_API_KEY` is not set.
+    #[serde(default)]
+    pub genfill_key_muse: String,
     /// Keep the Generative Fill bar visible even without a selection.
     #[serde(default)]
     pub genfill_bar_pinned: bool,
@@ -1388,6 +1397,9 @@ impl Default for UiState {
             status_error: false,
             genfill_bar_pos: None,
             genfill_api_key: String::new(),
+            genfill_provider: String::new(),
+            genfill_key_gemini: String::new(),
+            genfill_key_muse: String::new(),
             genfill_bar_pinned: false,
             notices: Vec::new(),
             gpu_fallback_notice: None,

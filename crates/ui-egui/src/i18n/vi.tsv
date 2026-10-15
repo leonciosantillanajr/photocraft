@@ -3678,3 +3678,6 @@ curves	Smooth	Làm mượt
 	That does not look like an OpenAI API key (they start with sk-).	Đây không giống khóa API OpenAI (khóa bắt đầu bằng sk-).
 	Bar always visible (click to show only with a selection)	Thanh luôn hiển thị (nhấp để chỉ hiện khi có vùng chọn)
 	Keep this bar always visible	Luôn hiển thị thanh này
+	Image generator	Trình tạo ảnh
+	API key of the selected generator	Khóa API của trình tạo đã chọn
+	Paste your {name} API key	Dán khóa API {name} của bạn

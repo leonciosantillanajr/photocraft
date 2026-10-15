@@ -3800,3 +3800,6 @@ navigator	Zoom	Zvětšení
 	That does not look like an OpenAI API key (they start with sk-).	To nevypadá jako klíč API OpenAI (začínají na sk-).
 	Bar always visible (click to show only with a selection)	Panel je vždy viditelný (kliknutím jej zobrazíte jen při výběru)
 	Keep this bar always visible	Mít tento panel vždy viditelný
+	Image generator	Generátor obrázků
+	API key of the selected generator	Klíč API vybraného generátoru
+	Paste your {name} API key	Vložte svůj klíč API pro {name}

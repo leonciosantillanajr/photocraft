@@ -3183,3 +3183,6 @@ curves	Smooth	Haluskan
 	That does not look like an OpenAI API key (they start with sk-).	Ini tidak tampak seperti kunci API OpenAI (diawali sk-).
 	Bar always visible (click to show only with a selection)	Bilah selalu terlihat (klik untuk menampilkan hanya saat ada seleksi)
 	Keep this bar always visible	Selalu tampilkan bilah ini
+	Image generator	Generator gambar
+	API key of the selected generator	Kunci API generator yang dipilih
+	Paste your {name} API key	Tempel kunci API {name} Anda

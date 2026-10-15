@@ -3790,3 +3790,6 @@ curves	Smooth	Wygładź
 	That does not look like an OpenAI API key (they start with sk-).	To nie wygląda na klucz API OpenAI (zaczynają się od sk-).
 	Bar always visible (click to show only with a selection)	Pasek zawsze widoczny (kliknij, by pokazywać tylko przy zaznaczeniu)
 	Keep this bar always visible	Zawsze pokazuj ten pasek
+	Image generator	Generator obrazów
+	API key of the selected generator	Klucz API wybranego generatora
+	Paste your {name} API key	Wklej swój klucz API do {name}

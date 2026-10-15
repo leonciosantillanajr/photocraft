@@ -3985,3 +3985,6 @@ layerLabel	No Color	Sem cor
 	Cancel selection	Cancelar seleção
 	Bar always visible (click to show only with a selection)	Barra sempre visível (clique para mostrar só com seleção)
 	Keep this bar always visible	Manter esta barra sempre visível
+	Image generator	Gerador de imagem
+	API key of the selected generator	Chave de API do gerador selecionado
+	Paste your {name} API key	Cole a sua chave de API de {name}

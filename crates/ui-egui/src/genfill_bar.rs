@@ -9,6 +9,7 @@
 //! the work runs as a cancellable background job and lands as new layers in one undo step.
 
 use egui::{Align2, Color32, CursorIcon, Key, Pos2, Rect, Sense, Shape, Stroke, StrokeKind, Ui, vec2};
+use photocraft_engine::genfill_cmds::Provider;
 use photocraft_engine::jobs::JobId;
 use serde_json::{Value, json};
 
@@ -53,6 +54,7 @@ enum Icon {
     Eraser,
     Empty,
     Pin,
+    Key,
     Image,
 }
 
@@ -74,6 +76,8 @@ enum Act {
     BackToIdle,
     Cancel(JobId),
     TogglePin,
+    OpenKey,
+    SetProvider(Provider),
     PickRef,
     ClearRefs,
     SaveKey,
@@ -176,6 +180,12 @@ fn paint_icon(ui: &Ui, icon: Icon, c: Pos2, color: Color32) {
             p.line_segment([c + vec2(0.0, 0.6), c + vec2(0.0, 7.0)], s);
             p.line_segment([c + vec2(-3.5, 0.6), c + vec2(3.5, 0.6)], s);
         }
+        Icon::Key => {
+            // a key: round bow, shaft with two teeth
+            p.circle_stroke(c + vec2(-3.5, -2.5), 3.4, s);
+            p.line_segment([c + vec2(-1.0, -0.2), c + vec2(6.5, 7.0)], s);
+            p.line_segment([c + vec2(3.5, 4.0), c + vec2(6.0, 1.5)], s);
+        }
         Icon::Image => {
             let r = Rect::from_center_size(c, vec2(15.0, 12.0));
             p.rect_stroke(r, 2.0, s, StrokeKind::Inside);
@@ -206,10 +216,25 @@ fn file_names(refs: &[String]) -> String {
     refs.iter().map(|p| std::path::Path::new(p).file_name().and_then(|n| n.to_str()).unwrap_or(p.as_str()).to_string()).collect::<Vec<_>>().join("\n")
 }
 
+fn current_provider(app: &PhotocraftApp) -> Provider {
+    Provider::parse(&app.ui.genfill_provider).unwrap_or_default()
+}
+
+fn key_slot(app: &mut PhotocraftApp, p: Provider) -> &mut String {
+    match p {
+        Provider::OpenAi => &mut app.ui.genfill_api_key,
+        Provider::Gemini => &mut app.ui.genfill_key_gemini,
+        Provider::Muse => &mut app.ui.genfill_key_muse,
+    }
+}
+
 /// Draws the bar (when it applies) and performs what was clicked. Call once per frame, after the canvas.
 pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
     if !app.genfill.key_synced {
-        photocraft_engine::genfill_cmds::set_api_key(&app.ui.genfill_api_key);
+        for p in Provider::ALL {
+            let key = key_slot(app, p).clone();
+            photocraft_engine::genfill_cmds::set_api_key(p, &key);
+        }
         app.genfill.key_synced = true;
     }
     let Some(d) = app.session.active() else {
@@ -242,6 +267,7 @@ pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
     let max_off = (canvas.height() - BAR_H - 8.0).max(8.0);
     let anchor = Pos2::new(canvas.min.x + fx.clamp(0.0, 1.0) * canvas.width(), canvas.max.y - off.clamp(8.0, max_off));
     let phase = app.genfill.phase;
+    let provider = current_provider(app);
     let elapsed = match phase {
         Phase::Busy(j) => app.session.job(j).map_or(0.0, |i| i.elapsed_ms / 1000.0),
         _ => 0.0,
@@ -285,6 +311,23 @@ pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
                             if pill(ui, &t, Some(Icon::Pin), "", if pinned { Look::Outline } else { Look::Ghost }, tip, 0).clicked() {
                                 act = Some(Act::TogglePin);
                             }
+                            sep(ui, &t);
+                            ui.spacing_mut().interact_size.y = BAR_H - 6.0;
+                            egui::ComboBox::from_id_salt("genfill-provider")
+                                .width(118.0)
+                                .selected_text(egui::RichText::new(provider.label()).color(t.text))
+                                .show_ui(ui, |ui| {
+                                    for p in Provider::ALL {
+                                        if ui.selectable_label(p == provider, p.label()).clicked() {
+                                            act = Some(Act::SetProvider(p));
+                                        }
+                                    }
+                                })
+                                .response
+                                .on_hover_text(tl!("Image generator"));
+                            if pill(ui, &t, Some(Icon::Key), "", Look::Ghost, tl!("API key of the selected generator"), 0).clicked() {
+                                act = Some(Act::OpenKey);
+                            }
                         }
                         Phase::Prompt => {
                             let r = crate::widgets::text_field_ex(ui, field_id(), &mut app.genfill.prompt, tl!("Describe what to create (optional)"), 320.0, false, Some(4000));
@@ -315,7 +358,12 @@ pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
                             }
                         }
                         Phase::NeedKey => {
-                            let r = crate::widgets::text_field_ex(ui, egui::Id::new("genfill-key"), &mut app.genfill.key_input, tl!("Paste your OpenAI API key (sk-…)"), 320.0, true, Some(300));
+                            let hint = if provider == Provider::OpenAi {
+                                tl!("Paste your OpenAI API key (sk-…)").to_string()
+                            } else {
+                                crate::i18n::fmt(tl!("Paste your {name} API key"), &[("name", provider.label())])
+                            };
+                            let r = crate::widgets::text_field_ex(ui, egui::Id::new("genfill-key"), &mut app.genfill.key_input, &hint, 320.0, true, Some(300));
                             if focus {
                                 r.request_focus();
                             }
@@ -356,7 +404,11 @@ pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
     }
 }
 
-fn start(app: &mut PhotocraftApp, command: &str, params: Value) {
+fn start(app: &mut PhotocraftApp, command: &str, mut params: Value) {
+    let provider = current_provider(app);
+    if let Some(o) = params.as_object_mut() {
+        o.insert("provider".into(), json!(provider.id()));
+    }
     match crate::jobs_ui::run(app, command, params) {
         Ok(v) => {
             app.genfill.phase = match v.get("job").and_then(Value::as_u64) {
@@ -364,7 +416,7 @@ fn start(app: &mut PhotocraftApp, command: &str, params: Value) {
                 None => Phase::Idle, // it ran to completion inline
             };
         }
-        Err(e) if e.contains("OPENAI_API_KEY") => {
+        Err(e) if e.contains(provider.env_var()) => {
             app.genfill.phase = Phase::NeedKey;
             app.genfill.focus_field = true;
         }
@@ -382,6 +434,14 @@ fn perform(app: &mut PhotocraftApp, act: Act) {
             app.genfill.focus_field = true;
         }
         Act::BackToIdle => app.genfill.phase = Phase::Idle,
+        Act::OpenKey => {
+            app.genfill.phase = Phase::NeedKey;
+            app.genfill.focus_field = true;
+        }
+        Act::SetProvider(p) => {
+            app.ui.genfill_provider = p.id().to_string();
+            app.genfill.phase = Phase::Idle;
+        }
         Act::TogglePin => app.ui.genfill_bar_pinned = !app.ui.genfill_bar_pinned,
         Act::Generate => {
             let params = json!({"prompt": app.genfill.prompt.trim(), "references": app.genfill.refs});
@@ -417,16 +477,18 @@ fn perform(app: &mut PhotocraftApp, act: Act) {
             });
         }
         Act::SaveKey => {
+            let provider = current_provider(app);
             let key = app.genfill.key_input.trim().to_string();
-            if key.starts_with("sk-") {
-                photocraft_engine::genfill_cmds::set_api_key(&key);
-                app.ui.genfill_api_key = key;
-                app.genfill.key_input.clear();
-                let sel = app.session.active().is_some_and(|d| d.doc.selection.is_some());
-                app.genfill.phase = if sel { Phase::Prompt } else { Phase::Idle };
-                app.genfill.focus_field = sel;
-            } else {
-                crate::notices::error(app, tl!("That does not look like an OpenAI API key (they start with sk-).").to_string());
+            match provider.check_key(&key) {
+                Ok(()) => {
+                    photocraft_engine::genfill_cmds::set_api_key(provider, &key);
+                    *key_slot(app, provider) = key;
+                    app.genfill.key_input.clear();
+                    let sel = app.session.active().is_some_and(|d| d.doc.selection.is_some());
+                    app.genfill.phase = if sel { Phase::Prompt } else { Phase::Idle };
+                    app.genfill.focus_field = sel;
+                }
+                Err(e) => crate::notices::error(app, e.0),
             }
         }
     }

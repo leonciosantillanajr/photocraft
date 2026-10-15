@@ -3952,3 +3952,6 @@ curves	Smooth	Vloeiend maken
 	That does not look like an OpenAI API key (they start with sk-).	Dit lijkt geen OpenAI-API-sleutel (ze beginnen met sk-).
 	Bar always visible (click to show only with a selection)	Balk altijd zichtbaar (klik om alleen bij een selectie te tonen)
 	Keep this bar always visible	Deze balk altijd zichtbaar houden
+	Image generator	Beeldgenerator
+	API key of the selected generator	API-sleutel van de gekozen generator
+	Paste your {name} API key	Plak je API-sleutel voor {name}
