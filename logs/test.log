@@ -1,0 +1,64 @@
+    Updating crates.io index
+     Locking 4 packages to highest Rust 1.95 compatible versions
+      Adding ureq v3.4.2
+      Adding ureq-proto v0.6.4
+      Adding utf8-zero v0.8.1
+      Adding webpki-roots v1.0.9
+   Compiling photocraft-genfill v0.9.0 (/home/runner/work/photocraft/photocraft/crates/genfill)
+    Finished `test` profile [optimized + debuginfo] target(s) in 5.25s
+     Running unittests src/lib.rs (target/debug/deps/photocraft_genfill-c182b65339646cad)
+
+running 43 tests
+test empty::tests::coarse_grid_merges_nearby_specks ... ok
+test empty::tests::limits_and_min_area_apply ... ok
+test empty::tests::opaque_image_has_no_regions ... ok
+test gemini::tests::body_has_text_then_images_and_image_config ... ok
+test empty::tests::separate_holes_become_regions_largest_first ... ok
+test imgops::tests::blur_keeps_flat_areas_and_softens_edges ... ok
+test imgops::tests::composite_over_blends_and_clips ... ok
+test imgops::tests::crop_and_bbox ... ok
+test imgops::tests::grow_is_square_window ... ok
+test imgops::tests::nearest_resize_stays_binary ... ok
+test imgops::tests::png_round_trip ... ok
+test imgops::tests::resize_preserves_flat_colour_and_size ... ok
+test openai::tests::body_has_images_mask_and_size ... ok
+test openai::tests::errors_are_friendly ... ok
+test openai::tests::key_checks ... ok
+test gemini::tests::parses_the_last_image_part_and_explains_refusals ... ok
+test gemini::tests::ratio_and_size_pick_the_closest ... ok
+test openai::tests::parses_b64_and_rejects_other_shapes ... ok
+test plan::tests::empty_selection_is_a_friendly_error ... ok
+test openai::tests::muse_body_has_no_mask_and_links_are_found ... ok
+test gemini::tests::errors_are_friendly ... ok
+test plan::tests::send_size_respects_multiple_and_pixel_budget ... ok
+test plan::tests::tiny_image_does_not_panic ... ok
+test prompt::tests::marked_prompts_name_the_colour ... ok
+test prompt::tests::marker_avoids_colours_in_the_picture ... ok
+test prompt::tests::prompts_follow_the_mode ... ok
+test provider::tests::ids_round_trip_and_aliases_parse ... ok
+test provider::tests::key_checks_name_the_variable_and_the_shape ... ok
+test provider::tests::only_openai_uses_a_mask ... ok
+test plan::tests::selection_at_corner_is_clamped_not_cropped_away ... ok
+test plan::tests::crop_has_margin_stays_inside_and_contains_selection ... ok
+test plan::tests::tier_follows_crop_size_and_can_be_forced ... ok
+test run::tests::mismatched_or_empty_selection_is_rejected_without_calling_the_api ... ok
+test run::tests::backend_errors_become_friendly_messages ... ok
+test run::tests::at_most_max_references_are_sent ... ok
+test run::tests::muse_uses_its_own_model_and_base ... ok
+test run::tests::fill_empty_makes_one_patch_per_area_and_feeds_context_forward ... ok
+test run::tests::remove_mode_ignores_text ... ok
+test run::tests::patch_is_opaque_inside_selection_transparent_far_away ... ok
+test run::tests::request_carries_prompt_mask_size_and_references ... ok
+test run::tests::services_without_a_mask_get_a_marked_image_and_no_mask ... ok
+test run::tests::untouched_result_gets_a_warning ... ok
+test run::tests::works_on_a_tiny_image ... ok
+
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.81s
+
+   Doc-tests photocraft_genfill
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+test exit: 0

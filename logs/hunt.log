@@ -1,0 +1,10 @@
+   Compiling photocraft-engine v0.9.0 (/home/runner/work/photocraft/photocraft/crates/engine)
+    Finished `test` profile [optimized + debuginfo] target(s) in 1m 01s
+     Running tests/panic_hunt.rs (target/debug/deps/panic_hunt-ad410382fdc1bdf8)
+
+running 1 test
+test no_command_panics_or_hangs_on_adversarial_params ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 19.66s
+
+hunt exit: 0
