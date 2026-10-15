@@ -1,0 +1,15 @@
+    Finished `dev` profile [optimized + debuginfo] target(s) in 0.14s
+     Running `target/debug/xtask parity`
+$ cargo run -p photocraft-ui-egui --example parity
+Photoshop menu parity: 631 / 631 live (100.0%)
+  File       52 / 52  
+  Edit       75 / 75  
+  Image      61 / 61  
+  Layer     163 / 163 
+  Type       45 / 45  
+  Select     25 / 25  
+  Filter     75 / 75  
+  View       74 / 74  
+  Window     61 / 61  
+wrote docs/parity-checklist.md
+parity exit: 0

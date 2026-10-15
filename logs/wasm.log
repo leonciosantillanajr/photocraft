@@ -1,0 +1,41 @@
+warning: constant `MAX_SUBFOLDER_FILES` is never used
+   --> crates/engine/src/file_cmds.rs:960:18
+    |
+960 | pub(crate) const MAX_SUBFOLDER_FILES: usize = 100_000;
+    |                  ^^^^^^^^^^^^^^^^^^^
+
+warning: `photocraft-engine` (lib) generated 3 warnings
+    Finished `dev` profile [optimized + debuginfo] target(s) in 28.13s
+$ cargo check --target wasm32-unknown-unknown -p photocraft-vector
+    Finished `dev` profile [optimized + debuginfo] target(s) in 0.13s
+$ cargo check --target wasm32-unknown-unknown -p photocraft-codecs --features heif
+    Checking photocraft-codecs v0.9.0 (/home/runner/work/photocraft/photocraft/crates/codecs)
+    Finished `dev` profile [optimized + debuginfo] target(s) in 1.21s
+
+wasm32-unknown-unknown check:
+  ok     photocraft-affinity
+  ok     photocraft-algo
+  ok     photocraft-cms
+  ok     photocraft-codecs
+  ok     photocraft-color
+  ok     photocraft-compose
+  ok     photocraft-doc
+  ok     photocraft-engine
+  ok     photocraft-format
+  ok     photocraft-genfill
+  ok     photocraft-geom
+  ok     photocraft-gpu
+  ok     photocraft-heif
+  ok     photocraft-io
+  ok     photocraft-ops
+  ok     photocraft-paint
+  ok     photocraft-plugins
+  ok     photocraft-psd
+  ok     photocraft-raster
+  ok     photocraft-raw
+  ok     photocraft-tablet
+  ok     photocraft-text
+  ok     photocraft-ui-egui
+  ok     photocraft-vector
+  ok     photocraft-codecs --features heif
+wasm exit: 0
