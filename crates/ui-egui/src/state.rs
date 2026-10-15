@@ -1282,6 +1282,9 @@ pub struct UiState {
     /// OpenAI API key for Generative Fill when `OPENAI_API_KEY` is not set.
     #[serde(default)]
     pub genfill_api_key: String,
+    /// Keep the Generative Fill bar visible even without a selection.
+    #[serde(default)]
+    pub genfill_bar_pinned: bool,
     /// Non-blocking notices (import/export warnings, files that couldn't open), newest last.
     #[serde(default)]
     pub notices: Vec<crate::notices::Notice>,
@@ -1385,6 +1388,7 @@ impl Default for UiState {
             status_error: false,
             genfill_bar_pos: None,
             genfill_api_key: String::new(),
+            genfill_bar_pinned: false,
             notices: Vec::new(),
             gpu_fallback_notice: None,
             kys_offer: None,

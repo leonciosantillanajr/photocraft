@@ -3983,3 +3983,5 @@ layerLabel	No Color	Sem cor
 @edit.generativeRemove	Generative Remove	Remoção generativa
 @edit.generativeFillEmpty	Fill Empty Areas	Preencher áreas vazias
 	Cancel selection	Cancelar seleção
+	Bar always visible (click to show only with a selection)	Barra sempre visível (clique para mostrar só com seleção)
+	Keep this bar always visible	Manter esta barra sempre visível

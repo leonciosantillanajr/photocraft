@@ -3192,3 +3192,5 @@ curves	Smooth	Glätten
 	Save key	Schlüssel speichern
 	Generating… {s} s	Wird generiert… {s} s
 	That does not look like an OpenAI API key (they start with sk-).	Das sieht nicht wie ein OpenAI-API-Schlüssel aus (er beginnt mit sk-).
+	Bar always visible (click to show only with a selection)	Leiste immer sichtbar (Klick: nur bei Auswahl anzeigen)
+	Keep this bar always visible	Diese Leiste immer anzeigen

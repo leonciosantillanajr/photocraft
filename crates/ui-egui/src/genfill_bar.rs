@@ -52,6 +52,7 @@ enum Icon {
     Sparkle,
     Eraser,
     Empty,
+    Pin,
     Image,
 }
 
@@ -72,6 +73,7 @@ enum Act {
     Deselect,
     BackToIdle,
     Cancel(JobId),
+    TogglePin,
     PickRef,
     ClearRefs,
     SaveKey,
@@ -97,7 +99,7 @@ fn pill(ui: &mut Ui, t: &Tokens, icon: Option<Icon>, label: &str, look: Look, ti
     let size = vec2(pad * 2.0 + icon_w + gap + text_w, BAR_H - 6.0);
     let (rect, resp) = ui.allocate_exact_size(size, Sense::click());
     let (fill, stroke) = match look {
-        Look::Primary => (if resp.is_pointer_button_down_on() { t.accent_border } else if resp.hovered() { t.accent_text } else { t.primary_bg }, Stroke::NONE),
+        Look::Primary => (if resp.is_pointer_button_down_on() { t.primary_bg.gamma_multiply(0.8) } else if resp.hovered() { t.primary_bg.lerp_to_gamma(t.primary_text, 0.14) } else { t.primary_bg }, Stroke::NONE),
         Look::Outline => (if resp.hovered() { t.hover } else { Color32::TRANSPARENT }, Stroke::new(1.0, t.field_border)),
         _ => (if resp.is_pointer_button_down_on() { t.pressed } else if resp.hovered() { t.hover } else { Color32::TRANSPARENT }, Stroke::NONE),
     };
@@ -168,6 +170,12 @@ fn paint_icon(ui: &Ui, icon: Icon, c: Pos2, color: Color32) {
             p.line_segment([c + vec2(-3.0, 0.0), c + vec2(3.0, 0.0)], s);
             p.line_segment([c + vec2(0.0, -3.0), c + vec2(0.0, 3.0)], s);
         }
+        Icon::Pin => {
+            // a push-pin: round head, short body, needle
+            p.circle_stroke(c + vec2(0.0, -3.0), 3.6, s);
+            p.line_segment([c + vec2(0.0, 0.6), c + vec2(0.0, 7.0)], s);
+            p.line_segment([c + vec2(-3.5, 0.6), c + vec2(3.5, 0.6)], s);
+        }
         Icon::Image => {
             let r = Rect::from_center_size(c, vec2(15.0, 12.0));
             p.rect_stroke(r, 2.0, s, StrokeKind::Inside);
@@ -219,7 +227,11 @@ pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
         app.genfill.phase = Phase::Idle;
     }
     let busy = matches!(app.genfill.phase, Phase::Busy(_));
-    if !has_selection && !busy {
+    let pinned = app.ui.genfill_bar_pinned;
+    if !has_selection && matches!(app.genfill.phase, Phase::Prompt) {
+        app.genfill.phase = Phase::Idle;
+    }
+    if !has_selection && !busy && !pinned {
         app.genfill.reset();
         return;
     }
@@ -254,18 +266,24 @@ pub fn show(app: &mut PhotocraftApp, ctx: &egui::Context) {
                     }
                     match phase {
                         Phase::Idle => {
-                            if pill(ui, &t, Some(Icon::Sparkle), tl!("Generative Fill"), Look::Primary, tl!("Describe what to create inside the selection"), 0).clicked() {
-                                act = Some(Act::OpenPrompt);
+                            if has_selection {
+                                if pill(ui, &t, Some(Icon::Sparkle), tl!("Generative Fill"), Look::Primary, tl!("Describe what to create inside the selection"), 0).clicked() {
+                                    act = Some(Act::OpenPrompt);
+                                }
+                                if pill(ui, &t, Some(Icon::Eraser), tl!("Remove"), Look::Plain, tl!("Remove what is selected and rebuild the background"), 0).clicked() {
+                                    act = Some(Act::Remove);
+                                }
                             }
-                            if pill(ui, &t, Some(Icon::Eraser), tl!("Remove"), Look::Plain, tl!("Remove what is selected and rebuild the background"), 0).clicked() {
-                                act = Some(Act::Remove);
-                            }
-                            if pill(ui, &t, Some(Icon::Empty), tl!("Fill empty areas"), Look::Plain, tl!("Fill the transparent areas of the image"), 0).clicked() {
+                            if pill(ui, &t, Some(Icon::Empty), tl!("Fill empty areas"), if has_selection { Look::Plain } else { Look::Primary }, tl!("Fill the transparent areas of the image"), 0).clicked() {
                                 act = Some(Act::FillEmpty);
                             }
                             sep(ui, &t);
-                            if pill(ui, &t, None, tl!("Cancel selection"), Look::Outline, "", 0).clicked() {
+                            if has_selection && pill(ui, &t, None, tl!("Cancel selection"), Look::Outline, "", 0).clicked() {
                                 act = Some(Act::Deselect);
+                            }
+                            let tip = if pinned { tl!("Bar always visible (click to show only with a selection)") } else { tl!("Keep this bar always visible") };
+                            if pill(ui, &t, Some(Icon::Pin), "", if pinned { Look::Outline } else { Look::Ghost }, tip, 0).clicked() {
+                                act = Some(Act::TogglePin);
                             }
                         }
                         Phase::Prompt => {
@@ -364,6 +382,7 @@ fn perform(app: &mut PhotocraftApp, act: Act) {
             app.genfill.focus_field = true;
         }
         Act::BackToIdle => app.genfill.phase = Phase::Idle,
+        Act::TogglePin => app.ui.genfill_bar_pinned = !app.ui.genfill_bar_pinned,
         Act::Generate => {
             let params = json!({"prompt": app.genfill.prompt.trim(), "references": app.genfill.refs});
             start(app, "edit.generativeFill", params);
@@ -403,8 +422,9 @@ fn perform(app: &mut PhotocraftApp, act: Act) {
                 photocraft_engine::genfill_cmds::set_api_key(&key);
                 app.ui.genfill_api_key = key;
                 app.genfill.key_input.clear();
-                app.genfill.phase = Phase::Prompt;
-                app.genfill.focus_field = true;
+                let sel = app.session.active().is_some_and(|d| d.doc.selection.is_some());
+                app.genfill.phase = if sel { Phase::Prompt } else { Phase::Idle };
+                app.genfill.focus_field = sel;
             } else {
                 crate::notices::error(app, tl!("That does not look like an OpenAI API key (they start with sk-).").to_string());
             }

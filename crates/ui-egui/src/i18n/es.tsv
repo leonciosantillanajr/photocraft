@@ -4152,3 +4152,5 @@ navigator	Zoom	Zoom
 	Save key	Guardar clave
 	Generating… {s} s	Generando… {s} s
 	That does not look like an OpenAI API key (they start with sk-).	Eso no parece una clave de API de OpenAI (empiezan por sk-).
+	Bar always visible (click to show only with a selection)	Barra siempre visible (clic para mostrarla solo con selección)
+	Keep this bar always visible	Mantener esta barra siempre visible

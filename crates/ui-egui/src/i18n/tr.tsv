@@ -3920,3 +3920,5 @@ cameraData	Lens	Lens
 	Save key	Anahtarı kaydet
 	Generating… {s} s	Üretiliyor… {s} sn
 	That does not look like an OpenAI API key (they start with sk-).	Bu bir OpenAI API anahtarına benzemiyor (sk- ile başlarlar).
+	Bar always visible (click to show only with a selection)	Çubuk her zaman görünür (yalnızca seçimle göstermek için tıklayın)
+	Keep this bar always visible	Bu çubuğu her zaman görünür tut

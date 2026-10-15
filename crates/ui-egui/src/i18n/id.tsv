@@ -3181,3 +3181,5 @@ curves	Smooth	Haluskan
 	Save key	Simpan kunci
 	Generating… {s} s	Membuat… {s} dtk
 	That does not look like an OpenAI API key (they start with sk-).	Ini tidak tampak seperti kunci API OpenAI (diawali sk-).
+	Bar always visible (click to show only with a selection)	Bilah selalu terlihat (klik untuk menampilkan hanya saat ada seleksi)
+	Keep this bar always visible	Selalu tampilkan bilah ini

@@ -4263,3 +4263,5 @@ shape	Appearance	Izgled
 	Save key	Sačuvaj ključ
 	Generating… {s} s	Generisanje… {s} s
 	That does not look like an OpenAI API key (they start with sk-).	Ovo ne liči na OpenAI API ključ (počinju sa sk-).
+	Bar always visible (click to show only with a selection)	Traka je uvek vidljiva (kliknite da se prikazuje samo uz izbor)
+	Keep this bar always visible	Neka ova traka uvek bude vidljiva

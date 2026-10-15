@@ -3788,3 +3788,5 @@ curves	Smooth	Wygładź
 	Save key	Zapisz klucz
 	Generating… {s} s	Generowanie… {s} s
 	That does not look like an OpenAI API key (they start with sk-).	To nie wygląda na klucz API OpenAI (zaczynają się od sk-).
+	Bar always visible (click to show only with a selection)	Pasek zawsze widoczny (kliknij, by pokazywać tylko przy zaznaczeniu)
+	Keep this bar always visible	Zawsze pokazuj ten pasek

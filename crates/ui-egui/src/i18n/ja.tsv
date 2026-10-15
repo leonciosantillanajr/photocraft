@@ -3866,3 +3866,5 @@ curves	Smooth	スムーズ
 	Save key	キーを保存
 	Generating… {s} s	生成中… {s} 秒
 	That does not look like an OpenAI API key (they start with sk-).	OpenAI の API キーではないようです（sk- で始まります）。
+	Bar always visible (click to show only with a selection)	バーを常に表示中（クリックで選択範囲があるときだけ表示）
+	Keep this bar always visible	このバーを常に表示する

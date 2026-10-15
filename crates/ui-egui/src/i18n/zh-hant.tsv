@@ -2790,3 +2790,5 @@ curves	Smooth	平滑
 	Save key	儲存金鑰
 	Generating… {s} s	生成中… {s} 秒
 	That does not look like an OpenAI API key (they start with sk-).	這看起來不是 OpenAI API 金鑰（以 sk- 開頭）。
+	Bar always visible (click to show only with a selection)	工具列永遠顯示（點擊後僅在有選取範圍時顯示）
+	Keep this bar always visible	永遠顯示此工具列

@@ -4109,3 +4109,5 @@ cameraRaw	Yellow	Sárga
 	Save key	Kulcs mentése
 	Generating… {s} s	Generálás… {s} mp
 	That does not look like an OpenAI API key (they start with sk-).	Ez nem OpenAI API-kulcsnak tűnik (sk- előtaggal kezdődnek).
+	Bar always visible (click to show only with a selection)	A sáv mindig látható (kattintás: csak kijelöléskor jelenjen meg)
+	Keep this bar always visible	A sáv mindig látható maradjon

@@ -3194,3 +3194,5 @@ curves	Smooth	Lisser
 	Save key	Enregistrer la clé
 	Generating… {s} s	Génération… {s} s
 	That does not look like an OpenAI API key (they start with sk-).	Cela ne ressemble pas à une clé API OpenAI (elles commencent par sk-).
+	Bar always visible (click to show only with a selection)	Barre toujours visible (cliquez pour l'afficher seulement avec une sélection)
+	Keep this bar always visible	Garder cette barre toujours visible
