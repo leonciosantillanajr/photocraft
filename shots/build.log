@@ -1,0 +1,34 @@
+    Updating crates.io index
+     Locking 4 packages to highest Rust 1.95 compatible versions
+      Adding ureq v3.4.2
+      Adding ureq-proto v0.6.4
+      Adding utf8-zero v0.8.1
+      Adding webpki-roots v1.0.9
+   Compiling photocraft-cms v0.9.0 (/home/runner/work/photocraft/photocraft/crates/cms)
+   Compiling photocraft-geom v0.9.0 (/home/runner/work/photocraft/photocraft/crates/geom)
+   Compiling photocraft-text v0.9.0 (/home/runner/work/photocraft/photocraft/crates/text)
+   Compiling photocraft-codecs v0.9.0 (/home/runner/work/photocraft/photocraft/crates/codecs)
+   Compiling photocraft-psd v0.9.0 (/home/runner/work/photocraft/photocraft/crates/psd)
+   Compiling photocraft-color v0.9.0 (/home/runner/work/photocraft/photocraft/crates/color)
+   Compiling photocraft-raster v0.9.0 (/home/runner/work/photocraft/photocraft/crates/raster)
+   Compiling photocraft-doc v0.9.0 (/home/runner/work/photocraft/photocraft/crates/doc)
+   Compiling photocraft-algo v0.9.0 (/home/runner/work/photocraft/photocraft/crates/algo)
+   Compiling photocraft-vector v0.9.0 (/home/runner/work/photocraft/photocraft/crates/vector)
+   Compiling photocraft-compose v0.9.0 (/home/runner/work/photocraft/photocraft/crates/compose)
+   Compiling photocraft-format v0.9.0 (/home/runner/work/photocraft/photocraft/crates/format)
+   Compiling photocraft-paint v0.9.0 (/home/runner/work/photocraft/photocraft/crates/paint)
+   Compiling photocraft-raw v0.9.0 (/home/runner/work/photocraft/photocraft/crates/raw)
+   Compiling photocraft-affinity v0.9.0 (/home/runner/work/photocraft/photocraft/crates/affinity)
+   Compiling photocraft-ui-egui v0.9.0 (/home/runner/work/photocraft/photocraft/crates/ui-egui)
+   Compiling photocraft-io v0.9.0 (/home/runner/work/photocraft/photocraft/crates/io)
+   Compiling photocraft-ops v0.9.0 (/home/runner/work/photocraft/photocraft/crates/ops)
+   Compiling photocraft-genfill v0.9.0 (/home/runner/work/photocraft/photocraft/crates/genfill)
+   Compiling photocraft-plugins v0.9.0 (/home/runner/work/photocraft/photocraft/crates/plugins)
+   Compiling photocraft-engine v0.9.0 (/home/runner/work/photocraft/photocraft/crates/engine)
+   Compiling photocraft-gpu v0.9.0 (/home/runner/work/photocraft/photocraft/crates/gpu)
+   Compiling photocraft-testkit v0.9.0 (/home/runner/work/photocraft/photocraft/crates/testkit)
+    Finished `release` profile [optimized] target(s) in 4m 31s
+     Running `target/release/examples/snapshot --out shots/bar.png --size 1440x900 --scale 1 --script '[["engine.execute",{"command":"file.new","params":{"width":1200,"height":800}}],["engine.execute",{"command":"select.rect","params":{"x":300,"y":200,"width":400,"height":250}}]]'`
+perf: {"commandMs":0.7882660000000214,"compositeMs":0.0,"gpu":true,"gpuBudgetMb":3997,"gpuFallback":null,"gpuInfo":{"adapter":"llvmpipe (LLVM 20.1.2, 256 bits)","backend":"vulkan","canvas":"gpu","deviceType":"cpu","driver":"llvmpipe Mesa 25.2.8-0ubuntu0.24.04.4 (LLVM 20.1.2)","fallback":null,"lost":null,"preference":"","selected":""},"gpuUploads":0,"lastCommand":"select.rect","lastRefresh":"rect","lastRefreshPx":0,"spans":{"outline":0.74,"scrollbars":0.0},"uiMaxMs":905.747863,"uiMs":13.291221279218762,"uploadMs":0.0}
+language: {"preference":"auto","resolved":"en"}
+wrote shots/bar.png (1440×900)
